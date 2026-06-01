@@ -1,0 +1,80 @@
+# Data (large, regenerate from source)
+data/patches/
+data/ml_ready/
+data/samples/
+data/inventarios/
+data/chañaral/
+data/choapa/
+data/taltal/
+data/aligned/*.h5
+factors/
+factors_extra/
+
+# Internal planning / private artifacts (not for public repo)
+CLAUDE.md
+PLAN_*.md
+BITACORA_*.md
+BUG_REPORT_*.md
+FEEDBACK_*.md
+CORREO_*.md
+CORREO_*.txt
+strategy/
+scripts/run_*_worker.sh
+
+# Journal corpora (1000-paper analysis .bibs — for matching/review, not paper)
+ISPRS_J.bib
+RSE.bib
+RSASE.bib
+land_degradation.bib
+rse_guidelines.pdf
+
+# Generated benchmark outputs (regenerable; only summary.csv kept via override)
+results/*/raw_*.csv
+results/*/combined_*.csv
+results/spatial_benchmark/raw_runs.csv
+
+# Intermediate plotting outputs (regenerable)
+figures/
+figures_pub/out/*.png
+
+# Results: keep summary CSVs only, drop raw runs
+results/*/raw_runs.csv
+results/*/raw_*.csv
+results/spatial_benchmark/runs_per_seed/
+logs/
+
+# Worker / cloud
+.venv/
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# LaTeX auxiliary
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/*.bak
+paper/_minted-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Intermediate sync trackers
+/tmp_*.txt

@@ -1,0 +1,53 @@
+\subsection{Random-CV $K$-shot benchmark}
+\label{sec:results:random}
+
+Under random cross-validation (Figure~\ref{fig:f1_random}), FOMAML wins $K=1$ in 3 of 4 target basins (Copiap\'o, Huasco, Limar\'i), with 5--9 percentage points (pp) $F_1$ advantage over Independent. The advantage narrows to 0--2~pp at $K=10$ and disappears at $K=20$, where all methods converge to within 1~pp $F_1$. This pattern is consistent with the theoretical expectation that meta-learning's advantage scales inversely with available task-specific data.
+
+\subsection{Spatial-CV $K$-shot benchmark}
+\label{sec:results:spatial}
+
+Under spatial cross-validation---where support and query are sampled from disjoint K-means clusters of the basin---\textbf{meta-learning (Reptile or FOMAML) wins $K=1$ in 4/4 target basins} (Figure~\ref{fig:lift}, Table~\ref{tab:spatial_results}). FOMAML achieves the highest $F_1$ at $K=1$ in Copiap\'o ($0.683$), while Reptile achieves the highest at $K=1$ in Huasco ($0.755$), Elqui ($0.476$) and Limar\'i ($0.528$); the inter-method gap between Reptile and FOMAML is within bootstrap standard error in every case. Compared with Independent, FOMAML's 95\% CIs at $K=1$ do not overlap with Independent's in 2/4 basins (Copiap\'o, Huasco), are marginal in Elqui ([.44,.51] vs.\ [.40,.46]) and Limar\'i ([.49,.54] vs.\ [.43,.49]). FOMAML achieves $+5.5$~pp $F_1$ mean advantage over Independent across targets at $K=1$ (range $+4.3$ to $+7.4$~pp), decaying monotonically to $+0.5$~pp at $K=20$. Fine-tune provides essentially no benefit (within $\pm 1$~pp).
+
+The spatial CV protocol yields lower absolute $F_1$ magnitudes than random CV (drop of 1~pp in Huasco to 27~pp in Elqui; Figure~\ref{fig:spatial_vs_random}), confirming that random CV overestimates absolute performance due to spatial autocorrelation, but \emph{the relative ranking of methods is preserved}.
+
+\subsection{Domain adaptation: DANN and CDAN both under-perform}
+\label{sec:results:dann}
+
+DANN does not improve over Independent on average and shows a strongly basin-dependent pattern (Table~\ref{tab:spatial_results}). The under-performance is concentrated in Copiap\'o, the smallest-inventory target ($N=19$ events), where DANN trails Independent by 5--7~pp $F_1$ across all $K$ values. In the other three targets, DANN is roughly neutral or marginally positive: Huasco $\pm 1$~pp, Elqui $+0.8$ to $+1.6$~pp, Limar\'i $-0.2$ to $+3.2$~pp; at $K=20$, DANN even wins Limar\'i ($0.598$, best of row).
+
+To verify this is not an artifact of DANN's decade-old design, we additionally evaluate \textbf{CDAN} \citep{long2018cdan}, a stronger conditional-adversarial method (Table~\ref{tab:extended_baselines}). CDAN exhibits the same failure mode: in Copiap\'o it reaches only $F_1 = 0.573$ at $K=1$ ($-3.6$~pp vs.\ Independent's $0.609$), and across all targets it remains below the meta-learning methods at $K=1$ (Copiap\'o $0.573$, Huasco $0.707$, Elqui $0.440$, Limar\'i $0.433$). That a modern conditional-adversarial method reproduces the negative-transfer pattern indicates the problem is intrinsic to adversarial domain alignment under scarce source domains, not specific to the original DANN formulation. We hypothesize that adversarial alignment requires both a moderately-sized source pool \emph{and} sufficient target signal to break ties between candidate invariances; the conjunction of few source domains ($N=10$) and a very small target inventory makes the gradient-reversal mechanism susceptible to negative transfer. We return to this in the Discussion (Section~\ref{sec:discussion}).
+
+\subsection{Adaptation curves confirm rapid convergence}
+\label{sec:results:adaptation}
+
+FOMAML's meta-learned initialization achieves $F_1 \approx 0.78$ within $\leq 3$ gradient steps in Copiap\'o (Figure~\ref{fig:adaptation}), confirming that the prior is already discriminative and the few-shot inner adaptation is rapid. Reptile reaches its peak in 3--5 steps, Fine-tune in $\sim 10$ steps. Independent, trained from random initialization in the adaptation-curve experiment, requires $>100$ steps before reaching a comparable plateau (well above the 30-step inner budget used in the main benchmark, Section~\ref{sec:methods:protocol}). This validates the practical efficiency benefit of meta-learning: a pre-trained meta-model is immediately deployable for new basins, whereas Independent training requires complete model retraining from random initialization.
+
+\subsection{Hyperparameter sensitivity}
+\label{sec:results:ablation}
+
+Sensitivity to inner steps $\{1, 3, 5, 10\}$, Reptile $\epsilon \in \{0.05, 0.1, 0.3\}$, and $K_{\text{meta}} \in \{5, 10, 20\}$ is small (within 0.5~pp; Figure~\ref{fig:ablations}). The default configuration (inner steps = 5, $\epsilon = 0.1$, $K_{\text{meta}} = 10$) is robust.
+
+\subsection{Climate similarity does not predict transfer success}
+\label{sec:results:climate}
+
+We tested whether source-target climate similarity (measured as $|$bio\_12$_{\text{source}} -$ bio\_12$_{\text{target}}|$) predicts FOMAML transfer advantage at $K=5$ (Figure~\ref{fig:climate}). The correlation is negligible (Pearson $r = 0.01$, $p = 0.99$; Spearman $\rho = 0.20$, $p = 0.80$). This indicates that meta-learning is \emph{robust to climate gradient mismatch} and does not require climate-matched sources to transfer successfully.
+
+\subsection{Classical ML is competitive under spatial CV}
+\label{sec:results:classical}
+
+Logistic regression, random forest, XGBoost and CatBoost achieve competitive $F_1$ under spatial CV (Figure~\ref{fig:classical}). Logistic regression wins 7/16 (target, $K$) combinations; random forest wins 4/16. Meta-learning (FOMAML or Reptile) wins 5/16, principally at $K=1$ in Copiap\'o and Limar\'i. \emph{This suggests meta-learning's practical advantage lies primarily in adaptation efficiency (zero-step deployment, 3--5-step adaptation) rather than peak $F_1$ in absolute terms.}
+
+\subsection{Modern meta-learning baselines confirm the advantage is method-robust}
+\label{sec:results:extended}
+
+To test whether the few-shot advantage is specific to first-order methods (Reptile, FOMAML) or general to meta-learning, we evaluate two additional baselines under spatial CV with five seeds: ProtoNet \citep{snell2017protonet} and Meta-Baseline \citep{chen2021metabaseline} (Table~\ref{tab:extended_baselines}, Figure~\ref{fig:extended}). \textbf{ProtoNet is competitive with FOMAML and Reptile} at $K=1$: it achieves the highest $F_1$ of \emph{any} method in Copiap\'o ($0.690$ vs.\ FOMAML $0.683$) and Huasco ($0.774$ vs.\ Reptile $0.755$), while trailing slightly in Elqui ($0.436$) and Limar\'i ($0.485$). That a metric-based meta-learner with \emph{zero} gradient adaptation matches gradient-based meta-learners corroborates the interpretation of \citet{raghu2020rapid} that the gain comes from a transferable representation, not from the adaptation mechanism. In contrast, \textbf{Meta-Baseline under-performs} all other meta-learners (e.g., Copiap\'o $K=1$ $F_1 = 0.461$), indicating that for tabular landslide features a frozen concat-pre-trained encoder with a cosine head is insufficient---episodic training (ProtoNet) or gradient adaptation (Reptile/FOMAML) is needed. Across all four target basins, at least one meta-learning method beats the Independent baseline at $K=1$, confirming the advantage is robust to the choice of meta-learner.
+
+\subsection{Variogram validation of spatial cross-validation}
+\label{sec:results:variogram}
+
+To verify that the K-means spatial folds (Section~\ref{sec:methods:protocol}) achieve genuine spatial separation rather than merely splitting autocorrelated pixels, we estimate the empirical variogram of Independent-model residuals for each target basin and fit a spherical model to extract the autocorrelation range (Figure~\ref{fig:variogram}). The fitted ranges are 39.3~km (Copiap\'o), 58.5~km (Huasco), 20.9~km (Elqui), and 15.6~km (Limar\'i). Comparing these to the median distance between fold centroids at $K_{\text{folds}}=5$ (70.0, 55.7, 43.6, and 54.2~km respectively), the fold separation \emph{exceeds} the autocorrelation range in three of four basins; only Huasco is marginal ($-2.8$~km), reflecting its larger spatial extent and inventory. Re-running the benchmark at $K_{\text{folds}} \in \{5, 10, 20\}$ confirms that the FOMAML advantage over Independent persists across all fold granularities (lift of $+0.4$ to $+2.6$~pp; Figure~\ref{fig:kfolds}), demonstrating that the reported advantage is not an artifact of the $K_{\text{folds}}=5$ choice. We adopt $K_{\text{folds}}=5$ as the primary protocol because it balances spatial decorrelation against fold-wise sample sufficiency in the smaller basins.
+
+\subsection{Spatial CNN backbone: spatial context substantially improves accuracy}
+\label{sec:results:cnn}
+
+To quantify how much the point-wise feature representation costs in predictive accuracy, we re-run the four primary methods (Independent, Fine-tune, Reptile, FOMAML) with a small spatial CNN backbone consuming $32 \times 32$ patches over the 25 gridded feature channels (Section~\ref{sec:methods:methods}) on the largest target basin, Huasco (Figure~\ref{fig:cnn}). \textbf{The CNN backbone outperforms the MLP by 6--11~pp $F_1$ across all methods and $K$ values}. At $K=1$, Independent CNN reaches $F_1 = 0.78$, already exceeding the MLP's best ($F_1 = 0.76$ for Reptile); FOMAML-CNN reaches $0.82$. At $K=20$, all CNN variants reach $F_1 \geq 0.93$ compared to $\sim 0.84$ for the MLP. The meta-learning lift over Independent is smaller in the CNN regime ($+4.2$~pp at $K=1$ for FOMAML-CNN vs.\ $+6.8$~pp for FOMAML-MLP, with the two intervals overlapping), indicating that spatial context absorbs part of the prediction signal that meta-learning's prior captures in the point-wise regime. Two implications follow. First, the main-benchmark MLP results report a \emph{conservative lower bound} on achievable cross-basin transfer accuracy; the systematic +5.5~pp meta-learning lift remains valid as a methodological finding but is not the operational ceiling. Second, the cross-basin meta-learning framework extends cleanly to a spatial CNN backbone, confirming that the conclusions of Sections~\ref{sec:results:spatial}--\ref{sec:results:extended} are not artifacts of the point-wise simplification. A full multi-target U-Net meta-learning evaluation is left for follow-up work; the Huasco demonstration is intended as a proof of concept that the framework generalises beyond the tabular MLP regime.

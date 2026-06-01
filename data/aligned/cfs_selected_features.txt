@@ -1,0 +1,14 @@
+# CFS-selected features (11)
+# Final score: 0.2486
+
+terrain__landform
+focal_stats__slope_std_r4
+terrain__mrvbf
+texture__glcm_entropy_dem
+terrain__openness_positive
+focal_stats__dem_std_r10
+terrain__curvedness
+texture__glcm_correlation_dem
+terrain__geomorphons
+terrain__mrrtf
+climate__bio_12

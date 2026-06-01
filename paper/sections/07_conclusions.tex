@@ -1,0 +1,13 @@
+We present the first cross-basin application of first-order meta-learning (Reptile, FOMAML) to landslide susceptibility classification across 14 Chilean watersheds spanning an extreme Atacama-to-Patagonia climate gradient, evaluated with rigorous spatial cross-validation and complementary to the temporal single-site setting of \citet{ma2025metalsm}. With 62{,}520 model fits across protocols, methods, $K$-shot regimes, three seeds, and dual cross-validation protocols, we demonstrate that meta-learning (Reptile or FOMAML) outperforms an Independent baseline at the most extreme few-shot regime ($K=1$) in 4 of 4 target basins under spatial cross-validation, with a mean lift of $+5.5$~pp $F_1$ (range $+4.3$ to $+7.4$~pp). Reptile and FOMAML achieve statistically comparable performance with overlapping bootstrap CIs in most target-$K$ cells. The advantage decays with $K$ and disappears by $K=20$, defining the practical envelope of applicability.
+
+Three findings carry methodological weight beyond the landslide application:
+
+\begin{enumerate}
+    \item \textbf{Adaptation efficiency is the distinguishing benefit of meta-learning}. Meta-learned initializations reach $F_1 \approx 0.78$ within $\leq 3$ gradient steps in Copiap\'o; classical ML matches peak $F_1$ at $K \geq 5$ but cannot operate at $K=0$. For operational deployment in newly-studied basins, zero-step deployability is meta-learning's unique value proposition.
+    \item \textbf{Climate similarity does not predict transfer success}. Meta-learning's prior captures generic geomorphic patterns that transfer across climate regimes, suggesting source-pool \emph{breadth} matters more than source-target \emph{similarity}.
+    \item \textbf{Domain-adversarial alignment is counter-productive with very small targets}. DANN does not improve over Independent on average; in Copiap\'o ($N=19$) it underperforms by 5--7~pp $F_1$, while remaining roughly neutral in larger target basins. The combination of few source domains ($N=10$) and a very small target inventory exposes the negative-transfer pathology of the adversarial loss.
+\end{enumerate}
+
+Limitations include the use of a small tabular MLP backbone (vs.\ U-Net spatial models), static climate features, and a 10-source pool that is small by meta-learning standards. Future work should extend to U-Net spatial architectures, trigger-aware meta-learning to handle intra-basin heterogeneity (e.g., Elqui), and richer source pools spanning Andean countries.
+
+The framework is directly applicable to other low-resource transfer scenarios in remote-sensing-based environmental monitoring across Latin America, where data-scarce basins outnumber data-rich ones and where rigorous spatial validation remains the exception rather than the rule.

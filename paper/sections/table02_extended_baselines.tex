@@ -1,0 +1,30 @@
+\begin{table*}[ht]
+    \centering
+    \caption{$F_1$ score (mean) with bootstrap 95\% confidence intervals for the three additional baselines (ProtoNet, Meta-Baseline, CDAN) under spatial cross-validation with five seeds. Best per row in \textbf{bold}. For comparison against the primary methods (Independent, Fine-tune, DANN, Reptile, FOMAML) see Table~\ref{tab:spatial_results}. Copiap\'o $K=20$ omitted ($N=19$, see Table~\ref{tab:spatial_results}). Source: \texttt{results/extended\_baselines/summary.csv}.}
+    \label{tab:extended_baselines}
+    \footnotesize
+    \begin{tabular}{llccc}
+        \toprule
+        \textbf{Target} & \textbf{$K$} & \textbf{ProtoNet} & \textbf{Meta-Baseline} & \textbf{CDAN} \\
+        \midrule
+        Copiap\'o & 1  & \textbf{0.690 [.66,.71]} & 0.461 [.43,.49] & 0.573 [.54,.60] \\
+                  & 5  & \textbf{0.727 [.70,.75]} & 0.494 [.47,.52] & 0.673 [.65,.70] \\
+                  & 10 & \textbf{0.774 [.75,.80]} & 0.531 [.50,.56] & 0.716 [.69,.74] \\
+        \midrule
+        Huasco    & 1  & \textbf{0.774 [.75,.80]} & 0.681 [.66,.70] & 0.707 [.68,.73] \\
+                  & 5  & \textbf{0.836 [.83,.84]} & 0.766 [.76,.77] & 0.768 [.75,.78] \\
+                  & 10 & \textbf{0.840 [.83,.85]} & 0.772 [.77,.78] & 0.807 [.80,.82] \\
+                  & 20 & \textbf{0.840 [.84,.85]} & 0.771 [.77,.77] & 0.833 [.82,.84] \\
+        \midrule
+        Elqui     & 1  & 0.436 [.41,.46] & 0.394 [.37,.42] & \textbf{0.440 [.42,.46]} \\
+                  & 5  & \textbf{0.526 [.50,.55]} & 0.479 [.46,.50] & 0.518 [.49,.54] \\
+                  & 10 & 0.528 [.50,.55] & 0.498 [.48,.52] & \textbf{0.543 [.52,.57]} \\
+                  & 20 & 0.520 [.50,.54] & 0.511 [.49,.53] & \textbf{0.540 [.51,.57]} \\
+        \midrule
+        Limar\'i  & 1  & \textbf{0.485 [.46,.51]} & 0.412 [.39,.43] & 0.433 [.41,.45] \\
+                  & 5  & 0.536 [.51,.56] & 0.510 [.49,.53] & \textbf{0.552 [.53,.57]} \\
+                  & 10 & 0.543 [.52,.56] & 0.543 [.53,.56] & \textbf{0.596 [.58,.61]} \\
+                  & 20 & 0.566 [.55,.58] & 0.580 [.57,.59] & \textbf{0.607 [.59,.62]} \\
+        \bottomrule
+    \end{tabular}
+\end{table*}

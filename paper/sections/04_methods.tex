@@ -1,0 +1,64 @@
+\subsection{Backbone model}
+\label{sec:methods:backbone}
+
+All methods share a 3-layer MLP backbone: 11 input features $\rightarrow$ 64 hidden $\rightarrow$ 32 hidden $\rightarrow$ 1 output, with ReLU activations, 10\% dropout per hidden layer, and binary cross-entropy with logits as the training loss. We deliberately use a small tabular network rather than a CNN or Transformer because (i) our feature representation is point-wise and scale-invariant, (ii) our pixel-level samples lack spatial neighborhoods at this stage of the pipeline, and (iii) it ensures interpretability of feature importance. Section~\ref{sec:discussion} discusses the natural extension to U-Net architectures for spatially-structured prediction.
+
+\subsection{Methods compared}
+\label{sec:methods:methods}
+
+\paragraph{Independent} Train MLP from scratch on $K$ target labels ($K$ positives + $K$ negatives), 30 Adam steps at learning rate $10^{-2}$. No source-basin information is used.
+
+\paragraph{Fine-tune (concat-source baseline)} Pretrain MLP on the concatenation of all 10 source basins (300 epochs at $10^{-3}$), then fine-tune for 30 steps on $K$ target samples.
+
+\paragraph{Reptile} \citep{nichol2018reptile}. First-order meta-learning. For 300 outer steps:
+\begin{enumerate}
+    \item Sample a source basin $\tau$.
+    \item Sample $K_{\text{meta}}=10$ support points.
+    \item Adapt model with 5 inner SGD steps at $10^{-2}$.
+    \item Update meta-model: $\theta \leftarrow \theta + \epsilon (\theta_{\text{adapted}} - \theta)$ with $\epsilon = 0.1$.
+\end{enumerate}
+At test time: load meta-model and adapt for 30 steps on $K$ target samples (same protocol as Fine-tune).
+
+\paragraph{FOMAML (First-Order MAML)} For 300 outer steps:
+\begin{enumerate}
+    \item Sample task $\tau$, support $S$, query $Q$.
+    \item Inner: 5 SGD steps on $S$, lr $10^{-2}$.
+    \item Compute query loss on the \emph{adapted} model.
+    \item Take query-loss gradient w.r.t. adapted parameters; copy this gradient to the meta-model.
+    \item Apply Adam outer-step at lr $10^{-3}$.
+\end{enumerate}
+
+\paragraph{DANN} \citep{ganin2015dann}. Feature extractor $F$: $11 \to 64 \to 32$ (shared). Class head $C$: $32 \to 1$. Domain head $D$: $32 \to 10$ (with Gradient Reversal Layer). Trained for 100 epochs at batch 64, lr $10^{-3}$, with annealed $\lambda(p) = 2/(1+e^{-10p}) - 1$. After training, $F+C$ are loaded into the MLP backbone for $K$-shot adaptation following the same protocol as Fine-tune.
+
+\paragraph{ProtoNet} \citep{snell2017protonet}. Prototypical networks. A shared feature encoder (same $11 \to 64 \to 32$ architecture as the MLP backbone) is meta-trained episodically: for each source task, class prototypes are the mean support embeddings, and the prototypical loss is the cross-entropy of negative squared-Euclidean distances from query embeddings to prototypes (300 outer steps, Adam at $10^{-3}$). At test time, the $K$ target support points define prototypes and query pixels are classified by nearest prototype---no gradient adaptation is required.
+
+\paragraph{Meta-Baseline} \citep{chen2021metabaseline}. The encoder is first pre-trained with standard supervised classification on the concatenated source pool, then frozen; at test time, $K$-shot cosine-similarity prototypes classify query pixels. This tests the claim that a strong pre-trained representation with a simple metric head can match episodic meta-learning.
+
+\paragraph{CDAN} \citep{long2018cdan}. Conditional adversarial domain adaptation. The domain classifier is conditioned on the outer product of feature embeddings and class-probability predictions (rather than features alone as in DANN), which the authors argue yields better-aligned multimodal distributions. Training and $K$-shot adaptation follow the same protocol as DANN.
+
+\paragraph{Spatial CNN (U-Net-style) backbone} As a methodological control on the point-wise MLP, we also train a small patch-classifier CNN on multi-channel image patches. We note that standard ISPRS benchmarks such as Vaihingen, Potsdam and DOTA target dense semantic segmentation of urban scenes or object detection in aerial imagery and are not directly applicable to sparse point-inventory landslide susceptibility, which has neither pixel-level masks nor bounding boxes; comparable point-supervised landslide-segmentation benchmarks in the ISPRS community are emerging \citep{wei2024universaladapter, ng2025crossresolution}. For each inventory point we extract a $32 \times 32$ window (covering $\sim 960 \times 960$~m at 30~m resolution) from the 25 gridded feature rasters (terrain + hydrology + texture + focal statistics) consistently available across all basins. The architecture is three Conv--ReLU blocks (32, 32, 64 channels) with two MaxPool layers, an adaptive global average pool, and a 32-unit FC head producing a binary logit ($\sim 74{,}000$ parameters). Reptile, FOMAML, Fine-tune (concat-source pre-train) and Independent are applied to this backbone under the same spatial $K$-shot CV protocol on the largest target basin (Huasco), with five fewer episodes per fold (15 vs.\ 20) to keep compute bounded. Magallanes was excluded from the source pool for this experiment because its raster stack exceeds the worker memory budget. Results (Section~\ref{sec:results:cnn}) quantify the value of spatial context for sparse-inventory susceptibility transfer.
+
+\paragraph{Classical ML baselines} For comparison, we evaluate four classical algorithms under identical $K$-shot spatial-CV protocol: \textbf{logistic regression} (sklearn, $L_2$ regularization, $C=1.0$, 500 iterations); \textbf{random forest} (100 estimators, max depth 10); \textbf{XGBoost} (100 estimators, max depth 5, lr 0.1); \textbf{CatBoost} (100 iterations, depth 5, lr 0.1). Each algorithm is run in two modes: \emph{independent} (trained only on $K$ target samples) and \emph{concat-source} (trained on full source pool + $K$ target samples).
+
+\paragraph{Statistical protocol for extended baselines} ProtoNet, Meta-Baseline, and CDAN are evaluated under the same spatial-CV protocol as the primary methods but with \textbf{five seeds} $\{42, 123, 7, 1729, 2718\}$ (vs.\ three for the main benchmark) to strengthen statistical power, yielding 16{,}380 additional $K$-shot adaptations.
+
+\subsection{$K$-shot evaluation protocol}
+\label{sec:methods:protocol}
+
+For each (target basin, $K$, method, seed) combination, we run two evaluation protocols:
+
+\paragraph{Random cross-validation} 50 $K$-shot episodes per (target, $K$, method, seed). Support and query are sampled at random from the basin's pixel pool; spatial proximity is not enforced.
+
+\paragraph{Spatial cross-validation} The target basin is partitioned into 5 spatial clusters via K-means on (x, y) UTM coordinates. For each fold (held-out cluster), 20 episodes sample $K$ positives + $K$ negatives from the \emph{training} clusters as support; the query is the \emph{full held-out cluster}. This guarantees support and query are spatially disjoint, addressing spatial autocorrelation per \citet{brenning2005spatial,pohjankukka2017spatialcv,valavi2019blockcv}. We acknowledge that K-means folds do not enforce a block size larger than the empirical variogram range of model residuals; per the framework of \citet{meyer2021aoa}, this implies that reported metrics describe interpolation within the basin's training extent rather than extrapolation. A formal area-of-applicability analysis is left as an avenue for follow-up work.
+
+Each episode:
+\begin{enumerate}
+    \item Sample support $S$ ($K$ positives + $K$ negatives).
+    \item For meta-trained methods (Reptile, FOMAML, DANN), load the corresponding meta-model; otherwise initialize from scratch.
+    \item Adapt with 30 Adam steps on $S$.
+    \item Evaluate $F_1$ and ROC-AUC on the query.
+\end{enumerate}
+
+Reported $F_1$ / AUC are bootstrap means with 95\% confidence intervals across 1{,}000 resamples of all (seed $\times$ episode) results pooled.
+
+The main spatial-CV $K$-shot benchmark (Table~\ref{tab:spatial_results}) comprises 4~targets~$\times$~4~$K$~values~$\times$~5~methods~$\times$~3~seeds~$\times$~5~folds~$\times$~20~episodes $= 24{,}000$ $K$-shot model adaptations. Adding the random-CV $K$-shot benchmark ($12{,}000$ adaptations), the classical-ML baselines ($\sim 11{,}500$ adaptations under both CV protocols and both train modes), the adaptation-curve experiment, and the hyperparameter-sensitivity ablation grid yields a total of $\sim 62{,}520$ model fits across the full study.

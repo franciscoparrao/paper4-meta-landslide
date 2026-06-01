@@ -1,0 +1,288 @@
+%% Paper 4 — Meta-learning for cross-basin landslide susceptibility transfer
+%% Target journal: Remote Sensing of Environment (Elsevier)
+%% Template: elsarticle (same template works for RSE, ISPRS J, RSASE, etc.)
+
+\documentclass[preprint,12pt,3p,authoryear]{elsarticle}
+
+% Standard packages
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{siunitx}       % SI units
+\usepackage{adjustbox}     % wide tables
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Hyperref colors
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    citecolor=blue!50!black,
+    urlcolor=blue!50!black,
+    breaklinks=true,
+}
+
+% Figure path
+\graphicspath{{../figures_pub/out/}}
+
+% Journal label (changeable depending on submission)
+\journal{ISPRS Journal of Photogrammetry and Remote Sensing}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Meta-learning for cross-basin landslide susceptibility transfer across 14 Chilean watersheds: a remote sensing benchmark under spatial cross-validation}
+
+%% Authors
+\author[usach]{Francisco Parra\corref{cor1}\fnref{orcid1}}
+\ead{francisco.parra.o@usach.cl}
+\cortext[cor1]{Corresponding author}
+\fntext[orcid1]{ORCID: 0009-0006-0435-1854}
+
+\author[unsl]{Verónica Gil-Costa}
+\author[usach]{Carolina Bonacic}
+\author[usach]{Mauricio Marín}
+
+\affiliation[usach]{organization={Departamento de Ingeniería Informática, Universidad de Santiago de Chile},
+            addressline={Av. Víctor Jara 3659},
+            city={Santiago},
+            postcode={9170125},
+            country={Chile}}
+
+\affiliation[unsl]{organization={Departamento de Informática, Facultad de Ciencias Físico Matemáticas y Naturales, Universidad Nacional de San Luis -- CONICET},
+            city={San Luis},
+            country={Argentina}}
+
+%% Abstract
+\begin{abstract}
+Earth-observation data enable landslide susceptibility mapping in mountains, but in \emph{newly-studied} basins the cost of local inventories is prohibitive and models from data-rich basins transfer poorly across geological-climatic gradients. We present the first cross-basin benchmark of first-order meta-learning (Reptile and First-Order MAML, FOMAML) for landslide susceptibility across 14 Chilean watersheds spanning an extreme hyper-arid Atacama (Tilviche-Loa, $\sim$1\,mm/yr) to hyper-humid Patagonia (Magallanes, $\sim$2{,}630\,mm/yr) gradient over 27$^\circ$ of latitude, with features from Sentinel-2, MERIT-DEM, GLCM texture, and WorldClim on a 30\,m grid. We meta-train on 10 sources and evaluate $K$-shot transfer ($K \in \{1, 5, 10, 20\}$) on 4 targets via 24{,}000 adaptations under random and spatial cross-validation, with bootstrap 95\% confidence intervals. Under spatial cross-validation, meta-learning (Reptile or FOMAML) outperforms an Independent baseline at $K=1$ in all four targets, with a mean lift of $+5.5$\,percentage points (pp) $F_1$ and overlapping CIs between Reptile and FOMAML. The advantage decays monotonically and vanishes by $K=20$; meta-learned initializations reach $F_1 \approx 0.78$ within $\leq 3$ gradient steps. A Domain-Adversarial Neural Network baseline does not improve over Independent and underperforms by $-6$\,pp in the smallest target (Copiap\'o, $N=19$). Classical machine-learning baselines reach competitive peak $F_1$ at $K \geq 5$: meta-learning's principal benefit is rapid adaptation efficiency, not absolute discrimination. Source--target climate distance does not predict transfer success ($r=0.01$), suggesting the prior captures generic geomorphic rather than climate-specific signals. The framework applies to low-resource Earth-observation transfer in mountain-hazard monitoring across Latin America.
+\end{abstract}
+
+%% Highlights (3-5 bullets, max 85 chars each)
+\begin{highlights}
+\item First cross-basin meta-learning benchmark for landslide susceptibility in 14 basins.
+\item Meta-learning beats the Independent baseline at K=1 in 4/4 targets (spatial CV).
+\item Mean +5.5 pp F1 lift (up to +7.8 pp); Reptile and FOMAML within overlapping CIs.
+\item DANN underperforms by 6 pp F1 in the smallest target (Copiap\'o, N=19).
+\item Climate distance does not predict transfer success---meta-learning is robust.
+\end{highlights}
+
+%% Keywords
+\begin{keyword}
+meta-learning \sep landslide susceptibility \sep transfer learning \sep
+remote sensing \sep spatial cross-validation \sep few-shot learning \sep Andes
+\end{keyword}
+
+\end{frontmatter}
+
+%% ============================================================
+\section{Introduction}
+\label{sec:intro}
+
+% TODO: Convert from paper_draft.md section 1
+% Hook: data-scarcity problem in newly-studied basins
+% Two existing strategies: transfer learning, domain adaptation
+% Meta-learning paradigm + gap in landslide literature
+% 4 contributions
+
+\input{sections/01_introduction.tex}
+
+%% ============================================================
+\section{Related Work}
+\label{sec:related}
+
+\input{sections/02_related_work.tex}
+
+%% ============================================================
+\section{Study area and data}
+\label{sec:data}
+
+\input{sections/03_study_area_data.tex}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[height=0.82\textheight]{fig01_study_area.pdf}
+    \caption{Fourteen Chilean watersheds spanning an extreme climate gradient---from the hyper-arid Atacama in the north ($\sim$1\,mm/yr) to hyper-humid Patagonia in the south ($\sim$2{,}630\,mm/yr), over 27$^\circ$ of latitude. Basins are numbered north-to-south; source basins (orange squares) are used for meta-training and target basins (blue circles) for $K$-shot evaluation. Polygons are color-coded by mean annual precipitation (WorldClim bio\_12, log scale). Inset: location within South America.}
+    \label{fig:study_area}
+\end{figure}
+
+%% ============================================================
+\section{Methods}
+\label{sec:methods}
+
+\input{sections/04_methods.tex}
+
+%% ============================================================
+\section{Results}
+\label{sec:results}
+
+\input{sections/05_results.tex}
+
+\begin{figure*}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{fig02_f1_vs_k_panel.pdf}
+    \caption{$F_1$ score versus number of support shots $K$ under \emph{random} cross-validation for the four target basins. Lines: mean across $50$ episodes $\times$ 3 seeds; shaded bands: bootstrap 95\% confidence intervals. FOMAML (pink) wins $K=1$ in 3 of 4 basins (Copiap\'o, Huasco, Limar\'i); advantage narrows to $<1$\,pp at $K=20$.}
+    \label{fig:f1_random}
+\end{figure*}
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.85\linewidth]{fig03_spatial_lift_vs_k.pdf}
+    \caption{Mean $F_1$ advantage over the Independent baseline (averaged across the four target basins) under \emph{spatial} cross-validation. FOMAML achieves $+5.5$\,pp at $K=1$, decaying monotonically to $+0.5$\,pp at $K=20$. DANN exhibits a negative advantage of $\sim-2$\,pp across all $K$. Thin lines: per-target advantages; thick lines: cross-target means.}
+    \label{fig:lift}
+\end{figure}
+
+\begin{figure*}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{fig04_adaptation_curves_K5.pdf}
+    \caption{Adaptation efficiency at $K=5$ across target basins. $F_1$ as a function of inner Adam gradient steps applied to the support set, evaluated on held-out queries. FOMAML reaches $F_1 \approx 0.78$ with \emph{zero} gradient steps in Copiap\'o, indicating the meta-learned initialization is already discriminative. Reptile peaks in 3--5 steps; Independent requires $>$100 steps to converge.}
+    \label{fig:adaptation}
+\end{figure*}
+
+\begin{figure*}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{fig05_spatial_vs_random.pdf}
+    \caption{$F_1$ versus $K$ under random (dashed) and spatial (solid) cross-validation. Spatial CV partitions basins into 5 K-means clusters on (x, y) coordinates, ensuring support and query are spatially disjoint. Drops between protocols: 1\,pp (Huasco) to 27\,pp (Elqui), but the relative ranking of methods is preserved.}
+    \label{fig:spatial_vs_random}
+\end{figure*}
+
+% Main table
+\input{sections/table01_spatial_results.tex}
+
+% Extended baselines table
+\input{sections/table02_extended_baselines.tex}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{fig06_extended_baselines.pdf}
+    \caption{Extended baselines under spatial cross-validation (five seeds): ProtoNet, Meta-Baseline, and CDAN (solid lines) compared against the reference Independent baseline and FOMAML (dashed). ProtoNet, a metric-based meta-learner requiring no gradient adaptation, matches or exceeds FOMAML at $K=1$ in Copiap\'o and Huasco, confirming the few-shot advantage is robust across meta-learning families. Meta-Baseline (frozen concat-pre-trained encoder) consistently lags. Shaded bands are bootstrap 95\% confidence intervals.}
+    \label{fig:extended}
+\end{figure*}
+
+%% ============================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\input{sections/06_discussion.tex}
+
+%% ============================================================
+\section{Conclusions}
+\label{sec:conclusions}
+
+\input{sections/07_conclusions.tex}
+
+%% ============================================================
+\section*{CRediT author contribution statement}
+\textbf{Francisco Parra}: Conceptualization, Methodology, Software, Formal analysis, Investigation, Data curation, Visualization, Writing -- original draft, Writing -- review \& editing. \textbf{Ver\'onica Gil-Costa}: Methodology, Validation, Writing -- review \& editing, Supervision. \textbf{Carolina Bonacic}: Methodology, Validation, Writing -- review \& editing. \textbf{Mauricio Mar\'in}: Conceptualization, Resources, Funding acquisition, Project administration, Supervision, Writing -- review \& editing.
+
+%% ============================================================
+\section*{Declaration of competing interest}
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+%% ============================================================
+\section*{Funding}
+This research was supported by the Postdoctoral Project DICYT 062619MC\_POSTDOC, Universidad de Santiago de Chile. The funding source had no involvement in the study design; collection, analysis or interpretation of data; writing of the report; or the decision to submit the article for publication.
+
+%% ============================================================
+\section*{Acknowledgments}
+The authors thank SERNAGEOMIN (Servicio Nacional de Geolog\'ia y Miner\'ia de Chile) for public access to the national \emph{catastro de remociones en masa}, and \citet{serey2019maule} for making the 2010 Maule earthquake landslide inventory publicly available. Map lines in this article delineate study areas and do not necessarily depict accepted national boundaries.
+
+%% ============================================================
+\section*{Data and code availability}
+\begin{itemize}
+    \item Code: \url{https://github.com/franciscoparrao/paper4-meta-landslide} (to be released upon acceptance).
+    \item Datasets: 14 ML-ready per-basin H5 files deposited at Zenodo (DOI to be issued upon acceptance).
+    \item SurtGIS toolkit, used for terrain and hydrology factor computation: \url{https://github.com/franciscoparrao/surtgis}.
+\end{itemize}
+
+%% ============================================================
+\section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
+During the preparation of this work the authors used Claude Code (Anthropic) to assist with prose drafting, code refactoring, statistical-result tabulation, and language polishing. After using this tool, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
+
+%% ============================================================
+%% References
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
+
+%% ============================================================
+%% Appendix / Supplementary
+\appendix
+
+\section{Supplementary figures}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS1_auc_vs_k_panel.pdf}
+    \caption{ROC-AUC versus $K$ under random cross-validation. Pattern consistent with $F_1$ results in Figure~\ref{fig:f1_random}.}
+    \label{fig:auc_random}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS2_spatial_f1_vs_k_panel.pdf}
+    \caption{$F_1$ versus $K$ under spatial cross-validation, including DANN. Meta-learning (Reptile or FOMAML) beats Independent at $K=1$ in all four target basins.}
+    \label{fig:f1_spatial}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS3_adaptation_curves_K10.pdf}
+    \caption{Adaptation curves at $K=10$. Same convergence pattern as $K=5$ (Figure~\ref{fig:adaptation}).}
+    \label{fig:adapt_k10}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS4_ablations.pdf}
+    \caption{Hyperparameter sensitivity ablation. (a) Inner gradient steps. (b) Reptile $\epsilon$. (c) Meta-training $K$. Sensitivity is small ($<1$\,pp F1) — baseline configuration is robust.}
+    \label{fig:ablations}
+\end{figure*}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figS5_summary_heatmap.pdf}
+    \caption{$F_1$ (mean) for all (target $\times$ $K$ $\times$ method) combinations under spatial CV.}
+    \label{fig:heatmap}
+\end{figure}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS6_classical_vs_meta.pdf}
+    \caption{Classical machine learning vs.\ meta-learning under spatial CV. Logistic regression, random forest, XGBoost and CatBoost are competitive with meta-learning in mean $F_1$, but classical models cannot adapt with $K=0$.}
+    \label{fig:classical}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS7_climate_distance.pdf}
+    \caption{(a) Climate distance matrix between source and target basins (annual precipitation difference). (b) FOMAML transfer advantage at $K=5$ vs.\ mean source-target climate distance; no significant correlation (Pearson $r=0.01$, Spearman $\rho=0.20$).}
+    \label{fig:climate}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS9_variogram.pdf}
+    \caption{Empirical variogram of Independent-model residuals for each target basin, with fitted spherical model (red dashed line marks the autocorrelation range). Fitted ranges: 39.3~km (Copiap\'o), 58.5~km (Huasco), 20.9~km (Elqui), 15.6~km (Limar\'i). At $K_{\text{folds}}=5$ the median fold-centroid separation exceeds the range in three of four basins, confirming the spatial folds achieve genuine spatial decorrelation.}
+    \label{fig:variogram}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS10_unet_vs_mlp.pdf}
+    \caption{Spatial CNN (U-Net-style) backbone vs.\ point-wise MLP on Huasco under the same spatial $K$-shot CV protocol with 9 source basins for meta-training. The CNN exceeds the MLP by 6--11~percentage points $F_1$ across all four methods and $K$ values. The meta-learning lift over Independent is smaller in the CNN regime, indicating that spatial context absorbs part of the prediction signal that meta-learning's prior captures in the point-wise setting.}
+    \label{fig:cnn}
+\end{figure*}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figS8_kfolds_sensitivity.pdf}
+    \caption{FOMAML $-$ Independent mean $F_1$ lift as a function of the number of spatial CV folds $K_{\text{folds}} \in \{5, 10, 20\}$. The meta-learning advantage persists at all fold granularities (lift $+0.4$ to $+2.6$~pp), demonstrating that the reported advantage is not an artifact of the $K_{\text{folds}}=5$ choice.}
+    \label{fig:kfolds}
+\end{figure}
+
+\end{document}

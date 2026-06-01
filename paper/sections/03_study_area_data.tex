@@ -1,0 +1,75 @@
+\subsection{Basins}
+\label{sec:data:basins}
+
+We study 14 watersheds distributed along the length of Chile (Figure~\ref{fig:study_area}), from the hyper-arid Atacama Desert ($\sim$22$^\circ$S) to hyper-humid Patagonia ($\sim$50$^\circ$S), selected to span an extreme hydro-climatic gradient (mean annual precipitation $\sim$1 to $\sim$2{,}630\,mm/yr) and to have heterogeneous landslide-mapping coverage. \textbf{Ten source basins} are used for meta-training: Cha\~naral / R\'io Salado (BNA~027, hyper-arid; 1{,}710 events from \citet{parra2025tesis} supplementary data), Costeras Q.~Negra--Pan de Az\'ucar / Taltal (BNA~029, hyper-arid coastal; 80 mass-movement polygons + 300 negatives from \citet{parra2025tesis}), Costeras Tilviche-Loa (BNA~022; 127~events), Costeras Loa-Caracoles (BNA~023; 50~events), R\'io Maipo (BNA~060; 349~events), R\'io Rapel (BNA~061; 392~events), R\'io Maule (BNA~073, semi-humid; 203~events filtered from the 1{,}227-event 2010 $M_w$ 8.8 earthquake-induced inventory of \citet{serey2019maule}), R\'io Choapa (BNA~047, semi-arid; 62~events from the SERNAGEOMIN national \emph{catastro de remociones en masa}), Costeras Bueno-Puelo (BNA~072; 47~events), and Costeras Magallanes (BNA~120; 413~events). \textbf{Four target basins} are used for $K$-shot evaluation: R\'io Copiap\'o (BNA~030; 19~events), R\'io Huasco (BNA~032; 278~events), R\'io Elqui (BNA~043; 132~events), and R\'io Limar\'i (BNA~045; 35~events). The split between source and target is motivated both by data availability and by ensuring climate-gradient coverage in both groups.
+
+\subsection{Remote-sensing and geospatial data sources}
+\label{sec:data:remotesensing}
+
+All conditioning factors are derived from open Earth-observation products harmonized to a common 30~m raster grid in UTM zone~19S. Table~\ref{tab:rs_inputs} summarizes the five primary sources, their spatial and temporal coverage, and the feature families derived from each.
+
+\begin{table*}[ht]
+    \centering
+    \caption{Remote-sensing and geospatial inputs used to compute the per-basin feature stack. All products are public and openly accessible.}
+    \label{tab:rs_inputs}
+    \footnotesize
+    \begin{tabular}{p{2.5cm}p{2.2cm}p{2.0cm}p{2.0cm}p{4.5cm}}
+        \toprule
+        \textbf{Product} & \textbf{Sensor / Source} & \textbf{Native res.} & \textbf{Period} & \textbf{Features derived} \\
+        \midrule
+        Sentinel-2 L2A & MSI optical, ESA Copernicus & 10--20~m & 2023 median composite, cloud-masked via SCL & Red, green, blue, NIR, SWIR-16, SWIR-22 spectral bands \\
+        \midrule
+        MERIT DEM \par(filled, hydrology-corrected) & SRTM + AW3D + ICESat fusion & 3~arc-sec ($\sim$90~m) & static & 29 terrain features (slope, aspect, MRVBF, openness, geomorphons, etc.); 8 hydrology features (flow accumulation, HAND, TWI, drainage density, sediment connectivity); 6 GLCM texture; 6 focal statistics \\
+        \midrule
+        WorldClim 2.1 & Multi-station interpolated climatology & 2.5~arc-min ($\sim$5~km) & 1970--2000 baseline & 5 bioclimatic variables (bio\_01 mean temp; bio\_12 annual precip; bio\_13/14 wettest/driest month precip; bio\_15 seasonality) \\
+        \midrule
+        SERNAGEOMIN national geological map & National Geological Survey of Chile & 1:1{,}000{,}000 vector & static & 3 categorical features (lithology, rock type, geological age) \\
+        \midrule
+        BNA basin polygons + landslide inventories & DGA + SERNAGEOMIN \emph{catastro de remociones} + \citet{serey2019maule} + \citet{parra2025tesis} & vector & 1922--2023 mixed & Basin extent for sampling; positive labels (3{,}290) and negatives (3{,}290) \\
+        \bottomrule
+    \end{tabular}
+\end{table*}
+
+Sentinel-2 surface reflectance is generated as a cloud-masked annual median composite for 2023 from the L2A product, providing a stable representation of surface cover state contemporaneous with the most recent landslide observations. MERIT DEM is preferred over individual SRTM tiles because its hydrologic corrections (pit filling, stream burning) yield more stable flow-routing derivatives essential for HAND and sediment connectivity. WorldClim 2.1 captures the 1970--2000 climatological baseline; while static climate features cannot represent extreme events that trigger individual landslides, they parameterize the long-term hydro-climatic regime that conditions susceptibility \citep{ma2025metalsm}. All raster inputs are resampled bilinearly (continuous variables) or by nearest neighbor (categorical), then stacked into a per-pixel feature vector consumed by the classifier. We acknowledge that this introduces an effective-resolution mismatch: MERIT-derived terrain and texture features inherit the $\sim$90~m source resolution despite being sampled on the 30~m grid, and WorldClim bioclimatics are nearly piecewise-constant within each $\sim$5~km native cell. Topographic and texture derivatives can thus be expected to be smoother than a native 30~m DEM (e.g., Copernicus GLO-30) would yield, and the climate-distance analysis of Section~\ref{sec:results:climate} is interpreted at basin level rather than per pixel. We return to this limitation in Section~\ref{sec:disc:limits}. Intermediate per-basin products are released via Zenodo (Section~\ref{sec:results}) to support reproducibility.
+
+\subsection{Conditioning factors}
+\label{sec:data:factors}
+
+We compute 63 features per basin at 30~m grid alignment, organized in seven categories:
+
+\begin{itemize}
+    \item \textbf{Terrain (29):} slope, aspect, eastness, northness, hillshade, sky-view factor, openness (positive, negative), geomorphons, Multi-resolution Index of Valley Bottom Flatness (MRVBF), Multi-resolution Index of Ridge-Top Flatness (MRRTF), terrain ruggedness, vector ruggedness measure, deviation from mean elevation, convergence, curvature, curvedness, shape index, surface area ratio, three TPI radii, valley depth, relative slope position, LS-factor, TRI, TPI.
+    \item \textbf{Hydrology (8):} flow accumulation (D8, MFD), flow direction (D8, D$\infty$), HAND, stream network, TWI, drainage density, sediment connectivity \citep{borselli2008sc}.
+    \item \textbf{Texture GLCM (6):} contrast, correlation, dissimilarity, energy, entropy, homogeneity (computed on DEM).
+    \item \textbf{Focal statistics (6):} DEM std at radii 1, 4, 10; DEM range $r=4$; slope std $r=4$; slope mean $r=4$.
+    \item \textbf{Spectral (6):} Sentinel-2 L2A median composite (red, green, blue, NIR, SWIR-16, SWIR-22) for 2023, cloud-masked via SCL.
+    \item \textbf{Climate (5):} WorldClim 2.1 bioclimatics---bio\_01 (annual mean temperature), bio\_12 (annual precipitation), bio\_13/14 (precipitation wettest/driest month), bio\_15 (precipitation seasonality).
+    \item \textbf{Geology (3):} SERNAGEOMIN 1:1{,}000{,}000 lithology class, rock type, geological age (categorical, encoded).
+\end{itemize}
+
+All factors are computed using SurtGIS, a Rust-based geospatial toolkit \citep{parra2025surtgis}, with reprojection to UTM zone 19S and bilinear/categorical resampling as appropriate.
+
+\subsection{Sampling protocol}
+\label{sec:data:sampling}
+
+We adopt a \textbf{hybrid balanced sampling} strategy. Each pixel of the 30~m DEM grid is the unit of analysis. For each basin:
+
+\begin{enumerate}
+    \item \textbf{Positives:} For point inventories, snap to nearest pixel. For polygon inventories (Taltal), rasterize with \texttt{all\_touched=True} and randomly sub-sample at most 30 pixels per polygon to limit spatial autocorrelation.
+    \item \textbf{Negatives:} When the inventory provides explicit non-mass-movement points (Cha\~naral, Taltal), we use them and expand each by a 60~m buffer to cover surrounding pixels. When negatives are unavailable, we generate them by random sampling within the basin polygon, excluding a 500~m buffer around positives to avoid spatial leakage.
+    \item \textbf{Balancing:} Negatives are sub-sampled or augmented to match positive count exactly (1:1).
+\end{enumerate}
+
+This procedure yields 9{,}182 samples across the 14 basins: 3{,}290 positives and 3{,}290 negatives form the balanced cross-validation pool, complemented by 2{,}602 additional source-only negatives used exclusively during meta-training (target basins contribute no additional source-only samples to avoid leakage into $K$-shot evaluation).
+
+\subsection{Feature selection via correlation-based feature selection (CFS)}
+\label{sec:data:cfs}
+
+We apply \textbf{correlation-based feature selection} \citep{hall1999cfs} using symmetric uncertainty (information-theoretic, robust to mixed data types). Features are quantile-discretized into 10 bins. Forward greedy search adds the feature that maximizes the subset score:
+\begin{equation}
+    M_S = \frac{k \cdot \overline{r_{cf}}}{\sqrt{k + k(k-1) \cdot \overline{r_{ff}}}},
+    \label{eq:cfs}
+\end{equation}
+where $k$ is subset size, $\overline{r_{cf}}$ the mean feature-class correlation, and $\overline{r_{ff}}$ the mean inter-feature correlation. The procedure terminates when no feature addition improves the score.
+
+CFS selects \textbf{11 features}: 6 terrain (landform, openness positive, MRVBF, MRRTF, curvedness, geomorphons), 2 focal statistics (DEM std $r=10$, slope std $r=4$), 2 texture GLCM (entropy, correlation), and 1 climate (bio\_12 annual precipitation). Notably, no hydrology, spectral, or geology features are selected---terrain ruggedness and texture dominate the discriminative signal across the Chilean landslide inventories.
