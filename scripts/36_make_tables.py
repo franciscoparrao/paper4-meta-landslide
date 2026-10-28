@@ -270,8 +270,45 @@ def tableS_cfs():
     (SEC / "tableS_cfs_comparison.tex").write_text("\n".join(lines) + "\n")
 
 
+def tableS_buffered():
+    d = pd.read_csv(R / "stats/buffered_cv_summary.csv")
+    d1 = d[d.K == 1]
+    bufs = sorted(d1.buffer_km.unique())
+    lines = [r"\begin{table*}[ht]", r"    \centering",
+             r"    \caption{Buffered spatial cross-validation at $K=1$ (source-only features, five seeds). Support pixels within the stated "
+             r"distance of the held-out cluster are removed from the support pool before sampling. Cells give the cluster-level paired "
+             r"Reptile $-$ Independent difference in pp $F_1$ with 95\% hierarchical-bootstrap CI and the number of valid partitions $n_c$; "
+             r"the joint row is the stratified permutation test across targets. Residual-variogram ranges: Copiap\'o 30, Huasco 45, Elqui 21, "
+             r"Limar\'i 17\,km. Source: \texttt{results/stats/buffered\_cv\_summary.csv}.}",
+             r"    \label{tab:buffered_cv}", r"    \footnotesize",
+             r"    \begin{tabular}{l" + "c" * len(bufs) + "}", r"        \toprule",
+             r"        \textbf{Target} & " + " & ".join(f"\\textbf{{{int(b)}\\,km}}" for b in bufs) + r" \\", r"        \midrule"]
+    for t in TARGETS:
+        cells = []
+        for b in bufs:
+            r = d1[(d1.target == t) & (d1.buffer_km == b)]
+            if r.empty:
+                cells.append("---"); continue
+            r = r.iloc[0]
+            star = "$^{*}$" if (r.ci_lo_pp > 0 or r.ci_hi_pp < 0) else ""
+            cells.append(f"${r.lift_reptile_pp:+.1f}$ [{r.ci_lo_pp:+.1f}, {r.ci_hi_pp:+.1f}]{star} ($n_c={int(r.n_clusters)}$)")
+        lines.append(f"        {LAB[t]} & " + " & ".join(cells) + r" \\")
+    lines.append(r"        \midrule")
+    cells = []
+    for b in bufs:
+        r = d1[(d1.target == "JOINT") & (d1.buffer_km == b)]
+        if r.empty:
+            cells.append("---"); continue
+        r = r.iloc[0]
+        ptxt = "$p<0.001$" if r.wilcoxon_p < 0.001 else f"$p={r.wilcoxon_p:.3f}$"
+        cells.append(f"$\\mathbf{{{r.lift_reptile_pp:+.1f}}}$, {ptxt} ($n_c={int(r.n_clusters)}$)")
+    lines.append(r"        \textbf{Joint (4 targets)} & " + " & ".join(cells) + r" \\")
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    (SEC / "tableS_buffered_cv.tex").write_text("\n".join(lines) + "\n")
+
+
 if __name__ == "__main__":
     table01(); table02(); table03(); table04(); table05()
-    tableS_basins(); tableS_folds(); tableS_cfs()
+    tableS_basins(); tableS_folds(); tableS_cfs(); tableS_buffered()
     for f in ["table01_spatial_results", "table02_extended_baselines", "table03_cluster_paired", "table04_negatives_sensitivity", "table05_pooled_vs_episodic"]:
         print(f"wrote {SEC / (f + '.tex')}")
