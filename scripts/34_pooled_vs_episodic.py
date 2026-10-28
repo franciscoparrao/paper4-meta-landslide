@@ -50,8 +50,12 @@ from _meta_lib import (  # noqa: E402
 )
 
 ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
-ML = ROOT / "data" / "ml_ready"
-OUT = ROOT / "results" / "pooled_vs_episodic"
+import argparse, os
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--tag", default="", help="suffix for the output directory (e.g. v1_cfs_all14)")
+_ARGS = _ap.parse_args()
+ML = Path(os.environ.get("P4_ML_DIR", str(ROOT / "data" / "ml_ready")))
+OUT = ROOT / "results" / ("pooled_vs_episodic" + (f"_{_ARGS.tag}" if _ARGS.tag else ""))
 OUT.mkdir(parents=True, exist_ok=True)
 
 SOURCE = ["chanaral", "taltal", "maule", "choapa", "tilviche", "caracoles",

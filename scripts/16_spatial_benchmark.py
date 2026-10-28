@@ -40,7 +40,8 @@ from _meta_lib import (
 )
 
 ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
-ML = ROOT / "data" / "ml_ready"
+import os
+ML = Path(os.environ.get("P4_ML_DIR", str(ROOT / "data" / "ml_ready")))
 import argparse
 _ap = argparse.ArgumentParser()
 _ap.add_argument("--buffer_km", type=float, default=0.0,

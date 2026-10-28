@@ -17,7 +17,8 @@ import torch.nn.functional as F
 from sklearn.metrics import f1_score, roc_auc_score
 
 ROOT = Path(__file__).resolve().parent.parent
-ML = ROOT / "data" / "ml_ready"
+import os as _os
+ML = Path(_os.environ.get("P4_ML_DIR", str(Path(__file__).resolve().parent.parent / "data" / "ml_ready")))  # R1: switchable
 DEVICE = torch.device("cpu")
 
 
