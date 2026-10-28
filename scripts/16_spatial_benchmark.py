@@ -57,7 +57,7 @@ FIGS.mkdir(parents=True, exist_ok=True)
 SOURCE = ["chanaral", "taltal", "maule", "choapa", "tilviche", "caracoles", "maipo", "rapel", "bueno_puelo", "magallanes"]
 TARGET = ["copiapo", "huasco", "elqui", "limari"]
 KS = [1, 5, 10, 20]
-SEEDS = [42, 123, 7]
+SEEDS = [42, 123, 7, 1729, 2718]  # R1: five seeds (as the extended baselines) to average meta-training variance
 K_FOLDS = 5
 N_EPISODES_PER_FOLD = 20
 

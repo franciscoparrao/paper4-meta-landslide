@@ -62,7 +62,7 @@ SOURCE = ["chanaral", "taltal", "maule", "choapa", "tilviche", "caracoles",
           "maipo", "rapel", "bueno_puelo", "magallanes"]
 TARGET = ["copiapo", "huasco", "elqui", "limari"]
 KS = [1, 5, 10, 20]
-SEEDS = [42, 123, 7]
+SEEDS = [42, 123, 7, 1729, 2718]  # R1: five seeds (as the extended baselines) to average meta-training variance
 K_FOLDS = 5
 N_EPISODES_PER_FOLD = 20
 META_OUTER, META_K, META_INNER_STEPS, META_INNER_LR, REPTILE_EPS = 300, 10, 5, 1e-2, 0.1
