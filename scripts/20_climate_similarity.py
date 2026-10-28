@@ -45,7 +45,9 @@ CLIMATE_FEAT = "climate__bio_12"  # annual precipitation
 
 def basin_climate_summary(basin):
     """Return mean precipitation for the basin (from sample-level data)."""
-    with h5py.File(ML / f"{basin}.h5", "r") as f:
+    # R1: bio_12 is no longer a selected feature (source-only CFS), so read it from
+    # the full aligned feature table rather than from the ML-ready subset.
+    with h5py.File(ML.parent / "aligned" / f"{basin}.h5", "r") as f:
         if CLIMATE_FEAT in f:
             arr = f[CLIMATE_FEAT][:]
         else:
