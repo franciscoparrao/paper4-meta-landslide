@@ -23,7 +23,8 @@ FIG = ROOT / "figures_pub" / "out"
 TARGETS = ["copiapo", "huasco", "elqui", "limari"]
 LAB = {"copiapo": "Copiapó", "huasco": "Huasco", "elqui": "Elqui", "limari": "Limarí"}
 BUFFERS = [(0, "spatial_benchmark"), (2, "spatial_benchmark_buffer2km"),
-           (5, "spatial_benchmark_buffer5km"), (10, "spatial_benchmark_buffer10km")]
+           (5, "spatial_benchmark_buffer5km"), (10, "spatial_benchmark_buffer10km"),
+           (20, "spatial_benchmark_buffer20km")]
 N_BOOT, N_PERM, SEED = 2000, 20000, 42
 
 
@@ -102,7 +103,7 @@ def main():
             ax.axhline(0, color="k", lw=0.5)
             ax.set_xlabel("Buffer around held-out cluster (km)")
             ax.set_title(f"$K={K}$")
-            ax.set_xticks([0, 2, 5, 10])
+            ax.set_xticks([0, 2, 5, 10, 20])
         axes[0].set_ylabel("Reptile $-$ Independent (pp $F_1$)")
         axes[1].legend(fontsize=7)
         fig.tight_layout()
