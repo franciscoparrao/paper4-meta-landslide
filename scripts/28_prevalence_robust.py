@@ -51,7 +51,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 SOURCE = ["chanaral", "taltal", "maule", "choapa", "tilviche", "caracoles",
           "maipo", "rapel", "bueno_puelo", "magallanes"]
 TARGETS = ["copiapo", "huasco", "elqui", "limari"]
-SEEDS = [42, 123, 7]
+SEEDS = [42, 123, 7, 1729, 2718]  # R1: five seeds
 K = 1
 K_FOLDS = 5
 N_EP = 20
