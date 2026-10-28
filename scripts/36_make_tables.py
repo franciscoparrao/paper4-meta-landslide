@@ -207,7 +207,71 @@ def table04():
     (SEC / "table04_negatives_sensitivity.tex").write_text("\n".join(lines) + "\n")
 
 
+# ----------------------------------------------------------------------------- supplementary
+def tableS_basins():
+    d = pd.read_csv(R / "stats/basin_summary.csv")
+    d = pd.concat([d[d.role == "source"].sort_values("pos_pixels", ascending=False), d[d.role == "target"].sort_values("basin")])
+    def esc(x): return str(x).replace("&", "\\&").replace("%", "\\%").replace("_", "\\_")
+    lines = [r"\begin{table*}[ht]", r"    \centering",
+             r"    \caption{Basin-by-basin inventory and sampling summary (reviewer request). Positive pixels are inventory points snapped "
+             r"to the 30\,m grid (Taltal: polygons rasterised, $\leq 30$ pixels per polygon). Explicit negatives exist in two basins only "
+             r"(Cha\~naral: 910 mapped non-landslide points; Taltal: 300 points expanded by a 60\,m buffer and completed with random samples); "
+             r"the other twelve basins use random sampling outside a 500\,m exclusion buffer around positives. All basins are balanced 1:1. "
+             r"`Dominant trigger' is taken from the inventory source and is indicative only. Source: \texttt{results/stats/basin\_summary.csv}.}",
+             r"    \label{tab:basin_summary}", r"    \scriptsize", r"    \begin{tabular}{llp{3.6cm}rrrrp{3.0cm}r}", r"        \toprule",
+             r"        \textbf{Basin} & \textbf{Role} & \textbf{Inventory} & \textbf{Events} & \textbf{Expl.\ neg.} & \textbf{Pos.\ px} & \textbf{Neg.\ px} & \textbf{Dominant trigger} & \textbf{Share src.\ pos.} \\",
+             r"        \midrule"]
+    for _, r in d.iterrows():
+        share = f"{r.share_of_source_positives:.3f}" if pd.notna(r.share_of_source_positives) else "---"
+        lines.append(f"        {LAB.get(r.basin, esc(r.basin.replace('_', ' ').title()))} & {r.role} & {esc(r.inventory_source)} & "
+                     f"{int(r.n_inventory_positives)} & {int(r.n_explicit_negative_points)} & {int(r.pos_pixels)} & {int(r.neg_pixels)} & "
+                     f"{esc(r.dominant_trigger)} & {share} \\\\")
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    (SEC / "tableS_basin_summary.tex").write_text("\n".join(lines) + "\n")
+
+
+def tableS_folds():
+    v = pd.read_csv(R / "stats/fold_validity.csv"); v = v[v.K == 1]
+    ov = pd.read_csv(R / "stats/fold_overlap.csv")
+    nn = pd.read_csv(R / "stats/fold_nn_distance.csv")
+    lines = [r"\begin{table*}[ht]", r"    \centering",
+             r"    \caption{Spatial-CV partition diagnostics per target basin (K-means, 5 folds, seeds 42/123/7/1729/2718 in the main "
+             r"benchmark; diagnostics computed on the three original seeds). `Valid' partitions at $K=1$ are those whose held-out cluster contains "
+             r"both classes; all exclusions are single-class held-out clusters. ARI is the adjusted Rand index between the partitions of different "
+             r"seeds (1 = identical partitions). NN distance is the distance from each held-out pixel to the nearest pixel of the training clusters, "
+             r"summarised over valid partitions. Source: \texttt{results/stats/fold\_validity.csv}, \texttt{fold\_overlap.csv}, \texttt{fold\_nn\_distance.csv}.}",
+             r"    \label{tab:fold_diagnostics}", r"    \footnotesize", r"    \begin{tabular}{lcccccc}", r"        \toprule",
+             r"        \textbf{Target} & \textbf{Valid / total} & \textbf{Excluded (single-class)} & \textbf{ARI across seeds} & "
+             r"\textbf{NN min (km)} & \textbf{NN p5 (km)} & \textbf{NN median (km)} \\", r"        \midrule"]
+    for t in TARGETS:
+        vt = v[v.target == t]; valid = vt[vt.valid]
+        ok = nn.merge(valid[["target", "seed", "fold"]], on=["target", "seed", "fold"])
+        a = ov[ov.target == t].ari
+        lines.append(f"        {LAB[t]} & {int(vt.valid.sum())}/{len(vt)} & {int((~vt.valid).sum())} & "
+                     f"{a.mean():.2f} [{a.min():.2f}, {a.max():.2f}] & {ok.nn_min_km.min():.1f} & {ok.nn_p05_km.median():.1f} & {ok.nn_median_km.median():.1f} \\\\")
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    (SEC / "tableS_fold_diagnostics.tex").write_text("\n".join(lines) + "\n")
+
+
+def tableS_cfs():
+    c = pd.read_csv(R / "stats/cfs_comparison.csv")
+    lines = [r"\begin{table}[ht]", r"    \centering",
+             r"    \caption{Correlation-based feature selection run on all 14 basins (the submitted version, which used target-basin labels) "
+             r"versus on the 10 source basins only (this revision). Step = order of entry in the forward search; SU = symmetric uncertainty "
+             r"with the class label. The source-only run selects 9 of the original 11 features; geomorphons and annual precipitation (bio\_12) "
+             r"are not selected. Source: \texttt{results/stats/cfs\_comparison.csv}.}",
+             r"    \label{tab:cfs_comparison}", r"    \footnotesize", r"    \begin{tabular}{lcccc}", r"        \toprule",
+             r"        \textbf{Feature} & \textbf{Step (all 14)} & \textbf{SU (all 14)} & \textbf{Step (source 10)} & \textbf{SU (source 10)} \\",
+             r"        \midrule"]
+    for _, r in c.iterrows():
+        f = r.feature.replace("_", "\\_")
+        lines.append(f"        \\texttt{{{f}}} & {r.step_all14} & {r.su_cf_all14} & {r.step_source10} & {r.su_cf_source10} \\\\")
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table}"]
+    (SEC / "tableS_cfs_comparison.tex").write_text("\n".join(lines) + "\n")
+
+
 if __name__ == "__main__":
     table01(); table02(); table03(); table04(); table05()
+    tableS_basins(); tableS_folds(); tableS_cfs()
     for f in ["table01_spatial_results", "table02_extended_baselines", "table03_cluster_paired", "table04_negatives_sensitivity", "table05_pooled_vs_episodic"]:
         print(f"wrote {SEC / (f + '.tex')}")
