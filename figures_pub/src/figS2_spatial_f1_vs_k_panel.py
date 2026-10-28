@@ -21,6 +21,13 @@ TARGET_LABELS = {"copiapo": "Copiapó", "huasco": "Huasco",
 def main():
     setup_style(journal="rse", base_fontsize=9)
     summary = pd.read_csv(BENCH)
+    # R1 (reviewer 3, comment 10): draw two-stage hierarchical-bootstrap intervals
+    # (clusters, then episodes) instead of the pooled seed x episode intervals.
+    hier = pd.read_csv(ROOT / "results" / "stats" / "hierarchical_bootstrap.csv")
+    summary = summary.merge(hier[["target", "K", "method", "hier_ci_lo", "hier_ci_hi"]],
+                            on=["target", "K", "method"], how="left")
+    summary["f1_ci_lo"] = summary["hier_ci_lo"].fillna(summary["f1_ci_lo"])
+    summary["f1_ci_hi"] = summary["hier_ci_hi"].fillna(summary["f1_ci_hi"])
 
     w = JOURNAL_WIDTH["rse"]["double"]
     fig, axes = plt.subplots(2, 2, figsize=(w, w * 0.55), sharey=True)
