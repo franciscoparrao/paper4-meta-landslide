@@ -235,9 +235,9 @@ def tableS_folds():
     ov = pd.read_csv(R / "stats/fold_overlap.csv")
     nn = pd.read_csv(R / "stats/fold_nn_distance.csv")
     lines = [r"\begin{table*}[ht]", r"    \centering",
-             r"    \caption{Spatial-CV partition diagnostics per target basin (K-means, 5 folds, seeds 42/123/7/1729/2718 in the main "
-             r"benchmark; diagnostics computed on the three original seeds). `Valid' partitions at $K=1$ are those whose held-out cluster contains "
-             r"both classes; all exclusions are single-class held-out clusters. ARI is the adjusted Rand index between the partitions of different "
+             r"    \caption{Spatial-CV partition diagnostics per target basin (K-means, 5 folds, seeds 42/123/7/1729/2718, as in the main "
+             r"benchmark). `Valid' partitions at $K=1$ are those whose held-out cluster contains "
+             r"both classes; all exclusions are single-class held-out clusters. ARI is the mean [min, max] adjusted Rand index between the partitions of different "
              r"seeds (1 = identical partitions). NN distance is the distance from each held-out pixel to the nearest pixel of the training clusters, "
              r"summarised over valid partitions. Source: \texttt{results/stats/fold\_validity.csv}, \texttt{fold\_overlap.csv}, \texttt{fold\_nn\_distance.csv}.}",
              r"    \label{tab:fold_diagnostics}", r"    \footnotesize", r"    \begin{tabular}{lcccccc}", r"        \toprule",

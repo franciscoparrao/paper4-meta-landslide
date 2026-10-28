@@ -1,16 +1,16 @@
 \begin{table*}[ht]
     \centering
-    \caption{Spatial-CV partition diagnostics per target basin (K-means, 5 folds, seeds 42/123/7/1729/2718 in the main benchmark; diagnostics computed on the three original seeds). `Valid' partitions at $K=1$ are those whose held-out cluster contains both classes; all exclusions are single-class held-out clusters. ARI is the adjusted Rand index between the partitions of different seeds (1 = identical partitions). NN distance is the distance from each held-out pixel to the nearest pixel of the training clusters, summarised over valid partitions. Source: \texttt{results/stats/fold\_validity.csv}, \texttt{fold\_overlap.csv}, \texttt{fold\_nn\_distance.csv}.}
+    \caption{Spatial-CV partition diagnostics per target basin (K-means, 5 folds, seeds 42/123/7/1729/2718, as in the main benchmark). `Valid' partitions at $K=1$ are those whose held-out cluster contains both classes; all exclusions are single-class held-out clusters. ARI is the mean [min, max] adjusted Rand index between the partitions of different seeds (1 = identical partitions). NN distance is the distance from each held-out pixel to the nearest pixel of the training clusters, summarised over valid partitions. Source: \texttt{results/stats/fold\_validity.csv}, \texttt{fold\_overlap.csv}, \texttt{fold\_nn\_distance.csv}.}
     \label{tab:fold_diagnostics}
     \footnotesize
     \begin{tabular}{lcccccc}
         \toprule
         \textbf{Target} & \textbf{Valid / total} & \textbf{Excluded (single-class)} & \textbf{ARI across seeds} & \textbf{NN min (km)} & \textbf{NN p5 (km)} & \textbf{NN median (km)} \\
         \midrule
-        Copiap\'o & 9/15 & 6 & 0.92 [0.88, 1.00] & 16.6 & 26.4 & 43.6 \\
-        Huasco & 6/15 & 9 & 1.00 [1.00, 1.00] & 1.9 & 6.4 & 16.7 \\
-        Elqui & 15/15 & 0 & 0.82 [0.75, 0.91] & 2.2 & 7.4 & 18.9 \\
-        Limar\'i & 12/15 & 3 & 0.60 [0.45, 0.89] & 6.1 & 13.1 & 27.5 \\
+        Copiap\'o & 15/25 & 10 & 0.93 [0.88, 1.00] & 16.6 & 26.4 & 43.6 \\
+        Huasco & 10/25 & 15 & 1.00 [1.00, 1.00] & 1.9 & 6.4 & 16.7 \\
+        Elqui & 25/25 & 0 & 0.84 [0.72, 0.94] & 2.2 & 7.4 & 17.2 \\
+        Limar\'i & 22/25 & 3 & 0.70 [0.45, 0.92] & 3.9 & 12.6 & 27.5 \\
         \bottomrule
     \end{tabular}
 \end{table*}

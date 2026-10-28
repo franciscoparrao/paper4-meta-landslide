@@ -44,7 +44,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 FIG.mkdir(parents=True, exist_ok=True)
 
 TARGETS = ["copiapo", "huasco", "elqui", "limari"]
-SEEDS = [42, 123, 7]          # identical to 16_spatial_benchmark.py
+SEEDS = [42, 123, 7, 1729, 2718]  # identical to 16_spatial_benchmark.py (R1: five seeds)
 K_FOLDS = 5
 KS = [1, 5, 10, 20]
 LABELS = {"copiapo": "Copiapó", "huasco": "Huasco", "elqui": "Elqui", "limari": "Limarí"}
