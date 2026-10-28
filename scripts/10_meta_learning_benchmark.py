@@ -27,6 +27,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.metrics import f1_score, roc_auc_score
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _meta_lib import load_features  # R1: shared, leakage-free feature list
+
 ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ML = ROOT / "data" / "ml_ready"
 OUT = ROOT / "results" / "benchmark"
@@ -207,9 +211,7 @@ def bootstrap_ci(values, n_boot=1000, ci=0.95, rng=None):
 
 
 def main():
-    feat_path = ML / "../aligned/cfs_selected_features.txt"
-    features = [l.strip() for l in feat_path.read_text().splitlines()
-                if l.strip() and not l.startswith("#")]
+    features = load_features()  # R1: leakage-free source-only CFS list (P4_FEATURES)
     n_in = len(features)
     print(f"Features ({n_in}): {features}")
 
