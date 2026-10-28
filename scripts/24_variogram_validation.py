@@ -34,7 +34,7 @@ from sklearn.cluster import KMeans
 
 sys.path.insert(0, str(Path(__file__).parent))
 from _meta_lib import (
-    DEVICE, MLP, bootstrap_ci, evaluate_query, fit_inner, fomaml_train,
+    DEVICE, MLP, bootstrap_ci, evaluate_query, fit_inner, fomaml_train, reptile_train,
     load_basin, load_features, read_h5, standardize_basin,
 )
 
@@ -136,7 +136,8 @@ def fold_size_stats(coords, folds, n_folds):
 
 
 def k_folds_sensitivity_one_basin(tgt, X, y, coords, src_std, n_in, k_folds, seed):
-    """Re-run spatial CV with given k_folds; return F1 for Independent + FOMAML."""
+    """Re-run spatial CV with given k_folds; return mean F1 per (method, K) for
+    Independent, FOMAML and Reptile. R1: K=1 added (reviewer 3, comment 9)."""
     torch.manual_seed(seed); np.random.seed(seed)
     rng = np.random.default_rng(seed)
     km = KMeans(n_clusters=k_folds, random_state=seed, n_init=10)
@@ -145,15 +146,17 @@ def k_folds_sensitivity_one_basin(tgt, X, y, coords, src_std, n_in, k_folds, see
     fom = fomaml_train(src_std, n_in, META_OUTER, META_K, N_QUERY,
                        5, META_INNER_LR, META_OUTER_LR, rng)
     fom_state = deepcopy(fom.state_dict())
+    rep = reptile_train(src_std, n_in, META_OUTER, META_K, 5, META_INNER_LR, 0.1, rng)
+    rep_state = deepcopy(rep.state_dict())
 
-    results = {"independent": [], "fomaml": []}
+    results = {}
     for fold in range(k_folds):
         test_mask = folds == fold
         train_mask = ~test_mask
         test_idx = np.where(test_mask)[0]
         if len(test_idx) < 4 or len(np.unique(y[test_idx])) < 2:
             continue
-        for K in [5, 10]:  # focus on most informative K values
+        for K in [1, 5, 10]:
             train_idx = np.where(train_mask)[0]
             pos = train_idx[y[train_idx] == 1]; neg = train_idx[y[train_idx] == 0]
             if len(pos) < K or len(neg) < K:
@@ -163,15 +166,16 @@ def k_folds_sensitivity_one_basin(tgt, X, y, coords, src_std, n_in, k_folds, see
                     rng.choice(pos, K, replace=False),
                     rng.choice(neg, K, replace=False),
                 ])
-                for method, init_state in [("independent", None), ("fomaml", fom_state)]:
+                for method, init_state in [("independent", None), ("fomaml", fom_state),
+                                           ("reptile", rep_state)]:
                     model = MLP(n_in).to(DEVICE)
                     if init_state is not None:
                         model.load_state_dict(init_state)
                     model = fit_inner(model, X_std[sup], y[sup],
                                       lr=ADAPT_LR, steps=ADAPT_STEPS)
                     m = evaluate_query(model, X_std[test_idx], y[test_idx])
-                    results[method].append(m["f1"])
-    return {m: float(np.mean(v)) if v else float("nan") for m, v in results.items()}
+                    results.setdefault((method, K), []).append(m["f1"])
+    return {k: float(np.mean(v)) if v else float("nan") for k, v in results.items()}
 
 
 def main():
@@ -242,34 +246,43 @@ def main():
     def _one(tgt, X, y, coords, k, seed):
         res = k_folds_sensitivity_one_basin(tgt, X, y, coords, src_std, n_in, k, seed)
         print(f"  {tgt:<10} k_folds={k} seed={seed} done", flush=True)
-        return {"target": tgt, "k_folds": k, "seed": seed,
-                "f1_independent": res["independent"],
-                "f1_fomaml": res["fomaml"]}
+        rows = []
+        for K in [1, 5, 10]:
+            rows.append({"target": tgt, "k_folds": k, "seed": seed, "K": K,
+                         "f1_independent": res.get(("independent", K), float("nan")),
+                         "f1_fomaml": res.get(("fomaml", K), float("nan")),
+                         "f1_reptile": res.get(("reptile", K), float("nan"))})
+        return rows
 
     sens_rows = Parallel(n_jobs=n_jobs, backend="loky", verbose=10)(
         delayed(_one)(*j) for j in jobs
     )
-    sens_df = pd.DataFrame(sens_rows)
+    sens_df = pd.DataFrame([r for rows in sens_rows for r in rows])
     sens_df.to_csv(OUT / "k_sensitivity.csv", index=False)
-    print(sens_df.groupby(["target", "k_folds"])[["f1_independent", "f1_fomaml"]].mean())
+    print(sens_df.groupby(["target", "k_folds", "K"])[["f1_independent", "f1_fomaml", "f1_reptile"]].mean())
 
-    # Sensitivity figure
-    fig, ax = plt.subplots(figsize=(8, 4))
-    agg = sens_df.groupby(["target", "k_folds"])[["f1_independent", "f1_fomaml"]].mean().reset_index()
-    width = 0.2
-    offsets = {5: -1.5, 10: -0.5, 20: 0.5}
-    for k in K_FOLDS_LIST:
-        sub = agg[agg.k_folds == k]
-        x = np.arange(len(sub)) + offsets[k] * width
-        ax.bar(x, sub["f1_fomaml"] - sub["f1_independent"], width=width,
-               label=f"K_folds={k}")
-    ax.set_xticks(np.arange(len(TARGET)))
-    ax.set_xticklabels([t.capitalize() for t in TARGET])
-    ax.set_ylabel("FOMAML $-$ Independent (mean $F_1$ lift)")
-    ax.set_title("Meta-learning lift sensitivity to spatial CV K_folds")
-    ax.axhline(0, color="black", lw=0.5)
-    ax.grid(True, alpha=0.3, axis="y")
-    ax.legend()
+    # Sensitivity figure: one panel per K (R1: K=1 added), Reptile and FOMAML lifts
+    fig, axes = plt.subplots(1, 3, figsize=(12, 3.8), sharey=True)
+    width = 0.13
+    offsets = {5: -1.0, 10: 0.0, 20: 1.0}
+    for ax, K in zip(axes, [1, 5, 10]):
+        agg = (sens_df[sens_df.K == K].groupby(["target", "k_folds"])
+               [["f1_independent", "f1_fomaml", "f1_reptile"]].mean().reset_index())
+        for k in K_FOLDS_LIST:
+            sub = agg[agg.k_folds == k].set_index("target").reindex(TARGET)
+            x = np.arange(len(TARGET))
+            ax.bar(x + offsets[k] * 2 * width - width / 2, sub["f1_reptile"] - sub["f1_independent"],
+                   width=width, label=f"Reptile, $K_{{folds}}$={k}", color=plt.cm.Blues(0.4 + 0.2 * K_FOLDS_LIST.index(k)))
+            ax.bar(x + offsets[k] * 2 * width + width / 2, sub["f1_fomaml"] - sub["f1_independent"],
+                   width=width, label=f"FOMAML, $K_{{folds}}$={k}", color=plt.cm.Oranges(0.4 + 0.2 * K_FOLDS_LIST.index(k)))
+        ax.set_xticks(np.arange(len(TARGET)))
+        ax.set_xticklabels([t.capitalize() for t in TARGET])
+        ax.set_title(f"$K={K}$ shot")
+        ax.axhline(0, color="black", lw=0.5)
+        ax.grid(True, alpha=0.3, axis="y")
+    axes[0].set_ylabel("Meta-learner $-$ Independent (mean $F_1$ lift)")
+    axes[-1].legend(fontsize=7, ncol=2)
+    fig.suptitle("Meta-learning lift vs number of spatial folds")
     fig.tight_layout()
     fig.savefig(FIGS / "k_folds_sensitivity.pdf", bbox_inches="tight")
     fig.savefig(FIGS / "k_folds_sensitivity.png", bbox_inches="tight", dpi=150)

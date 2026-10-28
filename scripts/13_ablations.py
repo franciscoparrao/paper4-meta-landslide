@@ -21,6 +21,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -77,7 +78,7 @@ def run_config(method, hp, src_std, tgt_data, n_in, seed):
     rows = []
     for tgt, (X, y) in tgt_data.items():
         X_std = standardize_basin(X)
-        rng_ep = np.random.default_rng(seed * 1000 + hash(tgt + method) % 1000)
+        rng_ep = np.random.default_rng(seed * 1000 + zlib.crc32((tgt + method).encode()) % 1000)
         for ep in range(N_EPISODES):
             m = evaluate_kshot_episode(state, X_std, y, EVAL_K, N_QUERY,
                                        n_in, rng_ep)

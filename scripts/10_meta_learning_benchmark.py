@@ -19,6 +19,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import h5py
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -253,7 +254,7 @@ def main():
                     ("reptile",     rep_state),
                     ("fomaml",      fom_state),
                 ]:
-                    rng_eval = np.random.default_rng(seed * 1000 + hash(tgt + method) % 1000)
+                    rng_eval = np.random.default_rng(seed * 1000 + zlib.crc32((tgt + method).encode()) % 1000)
                     for ep in range(N_EPISODES):
                         m = evaluate_episode(method, init_state, X_std, y, K,
                                              rng_eval, n_in)

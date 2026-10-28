@@ -26,6 +26,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -168,7 +169,7 @@ def main():
             for K in KS:
                 if K * 2 + N_QUERY * 2 > len(X):
                     continue
-                rng_ep = np.random.default_rng(seed * 1000 + hash(tgt + "dann") % 1000)
+                rng_ep = np.random.default_rng(seed * 1000 + zlib.crc32((tgt + "dann").encode()) % 1000)
                 for ep in range(N_EPISODES):
                     m = evaluate_kshot_episode(init_state, X_std, y, K, N_QUERY,
                                                n_in, rng_ep)

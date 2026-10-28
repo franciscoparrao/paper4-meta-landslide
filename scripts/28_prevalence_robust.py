@@ -30,6 +30,7 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -157,7 +158,7 @@ def main():
                 test_mask = folds == f
                 train_mask = ~test_mask
                 for meth, state in [("independent", None), ("reptile", rep_state)]:
-                    rng_ep = np.random.default_rng(seed * 1000 + f * 100 + hash(meth + t) % 100)
+                    rng_ep = np.random.default_rng(seed * 1000 + f * 100 + zlib.crc32((meth + t).encode()) % 100)
                     for _ in range(N_EP):
                         r = episode_preds(state, Xn, y, train_mask, test_mask, n_in, rng_ep)
                         if r is None:

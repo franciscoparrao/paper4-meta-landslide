@@ -18,6 +18,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -141,7 +142,7 @@ def main():
                 for model_name, factory in models.items():
                     for mode in ["independent", "concat_source"]:
                         rng = np.random.default_rng(
-                            seed * 1000 + hash(tgt + model_name + mode) % 1000)
+                            seed * 1000 + zlib.crc32((tgt + model_name + mode).encode()) % 1000)
                         for ep in range(N_EPISODES):
                             if mode == "concat_source":
                                 m = evaluate_classical(factory, X_std, y, K, N_QUERY,

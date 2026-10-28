@@ -26,6 +26,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -40,7 +41,14 @@ from _meta_lib import (
 
 ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ML = ROOT / "data" / "ml_ready"
-OUT = ROOT / "results" / "spatial_benchmark"
+import argparse
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--buffer_km", type=float, default=0.0,
+                 help="R1 (reviewer 3, c.8): exclude training pixels within this distance "
+                      "of the held-out cluster from the support pool. 0 = plain spatial CV.")
+_ARGS = _ap.parse_args()
+_SUFFIX = "" if _ARGS.buffer_km == 0 else f"_buffer{_ARGS.buffer_km:g}km"
+OUT = ROOT / "results" / f"spatial_benchmark{_SUFFIX}"
 FIGS = ROOT / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 FIGS.mkdir(parents=True, exist_ok=True)
@@ -146,6 +154,14 @@ def main():
             for fold in range(K_FOLDS):
                 test_mask = folds == fold
                 train_mask = ~test_mask
+                if _ARGS.buffer_km > 0:
+                    from scipy.spatial import cKDTree
+                    d_to_test, _ = cKDTree(coords[test_mask]).query(coords[train_mask], k=1)
+                    drop = np.flatnonzero(train_mask)[d_to_test < _ARGS.buffer_km * 1000.0]
+                    n_before = int(train_mask.sum())
+                    train_mask = train_mask.copy(); train_mask[drop] = False
+                    print(f"  {tgt:<10} fold={fold} buffer={_ARGS.buffer_km:g} km: "
+                          f"support pool {n_before} -> {int(train_mask.sum())}", flush=True)
                 for K in KS:
                     if K * 2 > train_mask.sum():
                         continue
@@ -158,7 +174,7 @@ def main():
                     ]:
                         rng_ep = np.random.default_rng(
                             seed * 1000 + fold * 100 + K
-                            + hash(method + tgt) % 100,
+                            + zlib.crc32((method + tgt).encode()) % 100,
                         )
                         for ep in range(N_EPISODES_PER_FOLD):
                             m = spatial_kshot_episode(state, X_std, y, train_mask,

@@ -24,6 +24,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -137,7 +138,7 @@ def run_one_seed(seed, src_raw, src_std, tgt_data, n_in):
                 if K * 2 > train_mask.sum():
                     continue
                 rng_ep = np.random.default_rng(
-                    seed * 1000 + fold * 100 + K + hash(tgt) % 100,
+                    seed * 1000 + fold * 100 + K + zlib.crc32((tgt).encode()) % 100,
                 )
                 for ep in range(N_EPISODES_PER_FOLD):
                     sup, qry = spatial_episode_indices(y, train_mask, test_mask, K, rng_ep)

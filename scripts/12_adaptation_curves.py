@@ -20,6 +20,7 @@ from pathlib import Path
 
 import h5py
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -260,7 +261,7 @@ def main():
                     ("reptile",     rep_state),
                     ("fomaml",      fom_state),
                 ]:
-                    rng_ep = np.random.default_rng(seed * 1000 + hash(tgt + method) % 1000)
+                    rng_ep = np.random.default_rng(seed * 1000 + zlib.crc32((tgt + method).encode()) % 1000)
                     for ep in range(N_EPISODES):
                         sup, qry = sample_kshot(X_std, y, K, N_QUERY, rng_ep)
                         Xs, ys_ = X_std[sup], y[sup]

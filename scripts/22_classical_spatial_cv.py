@@ -17,6 +17,7 @@ from pathlib import Path
 
 import h5py
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
@@ -161,7 +162,7 @@ def main():
                         for mode in ["independent", "concat_source"]:
                             rng = np.random.default_rng(
                                 seed * 1000 + fold * 100 + K
-                                + hash(model_name + mode + tgt) % 100)
+                                + zlib.crc32((model_name + mode + tgt).encode()) % 100)
                             for ep in range(N_EPISODES_PER_FOLD):
                                 if mode == "concat_source":
                                     m = evaluate_fold(factory, X_std, y, train_mask,

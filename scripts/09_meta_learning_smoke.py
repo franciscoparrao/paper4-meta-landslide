@@ -20,6 +20,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import h5py
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -215,7 +216,7 @@ def main():
             for method, state in [("independent", None),
                                   ("finetune", pretrained_state),
                                   ("reptile",  reptile_state)]:
-                rng_eval = np.random.default_rng(SEED + hash(method + tgt) % 1000)
+                rng_eval = np.random.default_rng(SEED + zlib.crc32((method + tgt).encode()) % 1000)
                 m = evaluate_kshot(method, tgt, X, y, K, N_EPISODES_EVAL,
                                   rng_eval, pretrained_state=state,
                                   n_in=len(features))

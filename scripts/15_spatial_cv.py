@@ -22,6 +22,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import zlib  # deterministic per-episode seeds (R1)
 import numpy as np
 import pandas as pd
 import torch
@@ -141,7 +142,7 @@ def main():
             spatial_folds = make_spatial_folds(coords, K_FOLDS, seed)
 
             for cv_type in ["spatial", "random"]:
-                rng_cv = np.random.default_rng(seed * 7 + hash(tgt + cv_type) % 1000)
+                rng_cv = np.random.default_rng(seed * 7 + zlib.crc32((tgt + cv_type).encode()) % 1000)
                 if cv_type == "spatial":
                     folds = spatial_folds
                 else:
@@ -157,7 +158,7 @@ def main():
                         for ep in range(N_EPISODES_PER_FOLD):
                             rng_e = np.random.default_rng(
                                 seed * 100 + fold * 10 + ep
-                                + hash(method + cv_type + tgt) % 100,
+                                + zlib.crc32((method + cv_type + tgt).encode()) % 100,
                             )
                             m = evaluate_fold(state, X_std, y, train_mask, test_mask,
                                               K_ADAPT, n_in, rng_e)
