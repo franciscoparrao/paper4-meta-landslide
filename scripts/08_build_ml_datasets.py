@@ -3,7 +3,7 @@
 
 Input:
   data/aligned/{basin}.h5
-  data/aligned/cfs_selected_features.txt
+  data/aligned/cfs_selected_features_source_only.txt (default; --features to override)
 Output:
   data/ml_ready/{basin}.h5  (X: features, y: label, plus coordinates)
   data/ml_ready/dataset_summary.csv
@@ -45,7 +45,14 @@ def write_h5(df: pd.DataFrame, path: Path) -> None:
 
 
 # Read CFS selection
-sel_path = ALIGNED / "cfs_selected_features.txt"
+import argparse
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--features", default="cfs_selected_features_source_only.txt",
+                 help="Feature list in data/aligned/. Default: leakage-free source-only CFS "
+                      "(R1). The submitted version used cfs_selected_features.txt (all 14 basins).")
+_args = _ap.parse_args()
+sel_path = ALIGNED / _args.features
+print(f"Feature list: {sel_path.name}")
 sel = [ln.strip() for ln in sel_path.read_text().splitlines()
        if ln.strip() and not ln.startswith("#")]
 print(f"CFS features ({len(sel)}):")

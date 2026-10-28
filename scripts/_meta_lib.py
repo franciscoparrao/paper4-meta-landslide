@@ -34,7 +34,15 @@ def load_basin(basin: str, features: list[str]):
 
 
 def load_features() -> list[str]:
-    p = ML / "../aligned/cfs_selected_features.txt"
+    """Feature list used by every benchmark script.
+
+    Default (R1): leakage-free CFS run on the 10 source basins only.
+    Set P4_FEATURES=cfs_selected_features.txt to reproduce the submitted
+    version (CFS on all 14 basins, 11 features).
+    """
+    import os
+    fname = os.environ.get("P4_FEATURES", "cfs_selected_features_source_only.txt")
+    p = ML / "../aligned" / fname
     return [l.strip() for l in p.read_text().splitlines()
             if l.strip() and not l.startswith("#")]
 
