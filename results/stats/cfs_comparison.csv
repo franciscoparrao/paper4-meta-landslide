@@ -1,0 +1,12 @@
+feature,step_all14,su_cf_all14,step_source10,su_cf_source10,status
+terrain__landform,1,0.1827,1,0.1828,both
+texture__glcm_entropy_dem,4,0.1475,2,0.1688,both
+terrain__mrvbf,3,0.1432,3,0.1609,both
+terrain__openness_positive,5,0.1657,4,0.1775,both
+focal_stats__dem_std_r10,6,0.1628,5,0.1767,both
+focal_stats__slope_std_r4,2,0.1616,6,0.1614,both
+texture__glcm_correlation_dem,8,0.1397,7,0.1575,both
+terrain__mrrtf,10,0.0449,8,0.0589,both
+terrain__curvedness,7,0.1429,9,0.1481,both
+terrain__geomorphons,9,0.1391,—,—,dropped (all14 only)
+climate__bio_12,11,0.0799,—,—,dropped (all14 only)

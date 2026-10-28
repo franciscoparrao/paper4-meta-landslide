@@ -14,8 +14,8 @@ Correlation: symmetric uncertainty (information-theoretic, robust to mixed types
             U(X, Y) = 2 * I(X;Y) / (H(X) + H(Y))
             All features discretized into 10 bins for SU computation.
 
-Input:  data/aligned/{basin}.h5  (8 basins)
-Output: data/aligned/cfs_selected_features.txt + data/aligned/cfs_score_history.csv
+Input:  data/aligned/{basin}.h5  (14 basins; --source-only restricts to the 10 source basins)
+Output: data/aligned/cfs_selected_features[_source_only].txt + cfs_score_history[_source_only].csv
 """
 
 from pathlib import Path
@@ -29,9 +29,10 @@ ALIGNED = ROOT / "data" / "aligned"
 N_BINS = 10
 SEED = 42
 
-BASINS = ["chanaral", "taltal", "maule", "choapa",
-          "tilviche", "caracoles", "maipo", "rapel", "bueno_puelo", "magallanes",
-          "copiapo", "huasco", "elqui", "limari"]
+SOURCE_BASINS = ["chanaral", "taltal", "maule", "choapa",
+                 "tilviche", "caracoles", "maipo", "rapel", "bueno_puelo", "magallanes"]
+TARGET_BASINS = ["copiapo", "huasco", "elqui", "limari"]
+BASINS = SOURCE_BASINS + TARGET_BASINS
 META = {"label", "x_utm", "y_utm", "pixel_row", "pixel_col", "basin"}
 
 
@@ -92,10 +93,18 @@ def cfs_subset_score(features: list[str], su_cf: dict, su_ff: dict) -> float:
 
 
 def main():
-    # Load + concat all basins
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--source-only", action="store_true",
+                    help="Leakage-free mode: use source-basin labels only (R1, reviewer 3 comment 2)")
+    args = ap.parse_args()
+    basins = SOURCE_BASINS if args.source_only else BASINS
+    suffix = "_source_only" if args.source_only else ""
+    print(f"Mode: {'SOURCE-ONLY (' + str(len(basins)) + ' basins)' if args.source_only else 'ALL ' + str(len(basins)) + ' basins'}")
+    # Load + concat basins
     print("Loading aligned per-basin samples...")
     dfs = []
-    for b in BASINS:
+    for b in basins:
         df = read_h5(ALIGNED / f"{b}.h5")
         df["basin"] = b
         dfs.append(df)
@@ -150,13 +159,13 @@ def main():
         print(f"  step {len(selected):2d}: +{best_f:<40} score={best_score:.4f}")
 
     # Save outputs
-    out_features = ALIGNED / "cfs_selected_features.txt"
+    out_features = ALIGNED / f"cfs_selected_features{suffix}.txt"
     out_features.write_text(f"# CFS-selected features ({len(selected)})\n"
                              f"# Final score: {history[-1]['score']:.4f}\n\n"
                              + "\n".join(selected) + "\n")
     print(f"\nSelected {len(selected)} features → {out_features.name}")
 
-    out_history = ALIGNED / "cfs_score_history.csv"
+    out_history = ALIGNED / f"cfs_score_history{suffix}.csv"
     pd.DataFrame(history).to_csv(out_history, index=False)
     print(f"History → {out_history.name}")
 
