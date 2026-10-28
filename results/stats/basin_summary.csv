@@ -1,0 +1,15 @@
+basin,role,inventory_source,inventory_geometry,n_inventory_positives,n_inventory_polygons,n_explicit_negative_points,negative_rule,dominant_trigger,pos_pixels,neg_pixels,share_of_source_positives
+copiapo,target,SERNAGEOMIN catastro,point,21,0,0,"random, 500 m exclusion buffer",mixed (catastro; 2015 floods),19,19,
+elqui,target,SERNAGEOMIN catastro,point,141,0,0,"random, 500 m exclusion buffer","mixed (2015 floods, 1997 El Niño, 1922 Vallenar earthquake)",132,132,
+huasco,target,SERNAGEOMIN catastro,point,296,0,0,"random, 500 m exclusion buffer",mixed (catastro; 2015 floods),278,278,
+limari,target,SERNAGEOMIN catastro,point,42,0,0,"random, 500 m exclusion buffer",mixed (catastro),35,35,
+bueno_puelo,source,SERNAGEOMIN catastro,point,47,0,0,"random, 500 m exclusion buffer","mixed (catastro, rainfall)",43,43,0.01
+caracoles,source,SERNAGEOMIN catastro,point,50,0,0,"random, 500 m exclusion buffer",mixed (catastro),48,48,0.012
+chanaral,source,Parra (2025) thesis suppl.; Chañaral/Río Salado,point,800,0,910,"explicit (910 mapped non-landslide points, 60 m buffer, subsampled 1:1)",rainfall (March 2015 Atacama floods),562,562,0.136
+choapa,source,SERNAGEOMIN catastro,point,62,0,0,"random, 500 m exclusion buffer",mixed (catastro),58,58,0.014
+magallanes,source,SERNAGEOMIN catastro,point,413,0,0,"random, 500 m exclusion buffer","mixed (catastro, rainfall/snow)",361,361,0.087
+maipo,source,SERNAGEOMIN catastro,point,349,0,0,"random, 500 m exclusion buffer","mixed (catastro, rainfall/snowmelt)",335,335,0.081
+maule,source,"Serey et al. (2019) Mw 8.8 2010 inventory, 4 typologies",point,203,0,0,"random, 500 m exclusion buffer",earthquake (2010 Maule),203,203,0.049
+rapel,source,SERNAGEOMIN catastro,point,392,0,0,"random, 500 m exclusion buffer",mixed (catastro),387,387,0.094
+taltal,source,Parra (2025) thesis; Taltal/Q. Negra–Pan de Azúcar,polygon (≤30 px/polygon),80,80,300,"explicit (300 mapped points, 60 m buffer) + random fill, 500 m exclusion",rainfall (March 2015),2003,2003,0.485
+tilviche,source,SERNAGEOMIN catastro,point,127,0,0,"random, 500 m exclusion buffer","mixed (catastro, rainfall-dominated)",127,127,0.031
