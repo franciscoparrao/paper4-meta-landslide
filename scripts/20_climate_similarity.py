@@ -30,7 +30,7 @@ from scipy.stats import pearsonr, spearmanr
 sys.path.insert(0, str(Path(__file__).parent))
 from _meta_lib import load_basin, load_features
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ML = ROOT / "data" / "ml_ready"
 OUT = ROOT / "results" / "climate"
 FIGS = ROOT / "figures"

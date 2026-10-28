@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from _meta_lib import (bootstrap_ci, load_basin, load_features, sample_kshot,
                        standardize_basin)
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ML = ROOT / "data" / "ml_ready"
 OUT = ROOT / "results" / "classical"
 FIGS = ROOT / "figures"

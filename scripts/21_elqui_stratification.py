@@ -37,7 +37,7 @@ from _meta_lib import (DEVICE, MLP, fit_inner, fomaml_train, load_basin,
                        load_features, evaluate_query, sample_kshot,
                        standardize_basin)
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ML = ROOT / "data" / "ml_ready"
 OUT = ROOT / "results" / "elqui_strat"
 FIGS = ROOT / "figures"

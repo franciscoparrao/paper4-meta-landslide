@@ -1,0 +1,31 @@
+\begin{table*}[ht]
+    \centering
+    \caption{Cluster-level paired comparison of each method against the Independent baseline at $K=1$ under spatial cross-validation. The paired unit is the $(\text{seed}, \text{fold})$ spatial partition ($n_c$ per target), within which all methods evaluate on the same held-out query cluster; the paired difference is the per-cluster mean-$F_1$ gap. Intervals are 95\% hierarchical-bootstrap CIs (resampling clusters, then episodes; 2{,}000 resamples). $^{*}$CI excludes zero. The last columns give the number of clusters with a positive difference and the two-sided Wilcoxon signed-rank $p$-value on the cluster differences. Meta-learning (Reptile/FOMAML) is significant in Huasco, Elqui and Limar\'i but not in Copiap\'o ($N=19$, too few clusters); Fine-tune and DANN are significant in no target. Source: \texttt{results/stats/cluster\_paired\_vs\_independent.csv}.}
+    \label{tab:cluster_paired}
+    \footnotesize
+    \begin{tabular}{llccc}
+        \toprule
+        \textbf{Target} & \textbf{Method} & \textbf{$\Delta F_1$ vs Indep.\ (pp) [95\% CI]} & \textbf{Clusters $>0$} & \textbf{Wilcoxon $p$} \\
+        \midrule
+        Copiap\'o ($n_c=9$) & Reptile & $+5.7$ [-0.1, +12.9] & 7/9 & 0.164 \\
+         & FOMAML & $+5.4$ [-0.6, +12.3] & 7/9 & 0.098 \\
+         & Fine-tune & $+0.0$ [-5.2, +6.1] & 5/9 & 1.000 \\
+         & DANN & $-7.0$ [-15.9, +1.5] & 3/9 & 0.250 \\
+        \midrule
+        Huasco ($n_c=6$) & Reptile & $+7.8$ [+4.8, +11.6]$^{*}$ & 6/6 & 0.031 \\
+         & FOMAML & $+6.8$ [+2.4, +10.9]$^{*}$ & 5/6 & 0.062 \\
+         & Fine-tune & $+1.9$ [-2.0, +5.6] & 4/6 & 0.438 \\
+         & DANN & $+1.2$ [-2.7, +5.2] & 3/6 & 0.688 \\
+        \midrule
+        Elqui ($n_c=15$) & Reptile & $+4.7$ [+2.6, +6.9]$^{*}$ & 13/15 & 0.001 \\
+         & FOMAML & $+4.2$ [+1.5, +7.3]$^{*}$ & 12/15 & 0.012 \\
+         & Fine-tune & $-1.1$ [-3.9, +1.3] & 6/15 & 0.561 \\
+         & DANN & $+0.7$ [-4.6, +6.9] & 5/15 & 0.639 \\
+        \midrule
+        Limar\'i ($n_c=12$) & Reptile & $+6.7$ [+3.4, +9.8]$^{*}$ & 10/12 & 0.007 \\
+         & FOMAML & $+5.3$ [+1.5, +8.9]$^{*}$ & 10/12 & 0.034 \\
+         & Fine-tune & $+0.6$ [-3.9, +5.0] & 6/12 & 0.970 \\
+         & DANN & $-0.3$ [-4.6, +3.7] & 7/12 & 0.970 \\
+        \bottomrule
+    \end{tabular}
+\end{table*}

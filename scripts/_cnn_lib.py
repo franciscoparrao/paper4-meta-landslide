@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.metrics import f1_score, roc_auc_score
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 PATCH_DIR = ROOT / "data" / "patches"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

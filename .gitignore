@@ -78,3 +78,12 @@ Thumbs.db
 
 # Intermediate sync trackers
 /tmp_*.txt
+
+# Submission paperwork and reviewer correspondence (private)
+revision_R1/
+CHECKLIST_RSASE_PRESUBMIT.*
+declaration_of_interest.*
+paper/declaration_of_interest.pdf
+paper/statement_humans_animals.pdf
+paper/submission_metadata.txt
+paper4_latex_source.zip

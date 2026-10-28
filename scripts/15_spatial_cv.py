@@ -34,7 +34,7 @@ from _meta_lib import (
     standardize_basin, evaluate_query,
 )
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ML = ROOT / "data" / "ml_ready"
 OUT = ROOT / "results" / "spatial_cv"
 FIGS = ROOT / "figures"

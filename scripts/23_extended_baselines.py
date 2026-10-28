@@ -38,7 +38,7 @@ from _meta_lib import (
 )
 from _meta_lib import MLP, fit_inner, evaluate_query, sample_kshot  # noqa: F401
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ML = ROOT / "data" / "ml_ready"
 OUT = ROOT / "results" / "extended_baselines"
 FIGS = ROOT / "figures"

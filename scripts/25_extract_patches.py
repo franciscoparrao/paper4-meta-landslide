@@ -19,7 +19,7 @@ import h5py
 import numpy as np
 import rasterio
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 FX = ROOT / "factors_extra"
 SAMPLES = ROOT / "data" / "samples"
 OUT = ROOT / "data" / "patches"

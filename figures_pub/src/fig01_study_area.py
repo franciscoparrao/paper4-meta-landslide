@@ -21,26 +21,28 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "utils"))
 from style import COLOR_WONG, JOURNAL_WIDTH, save_pub, setup_style
 
 ROOT = Path(__file__).parent.parent.parent
-BNA = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/Cuencas_BNA/Cuencas_BNA.shp")
-WORLDCLIM = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/factors/_worldclim/wc2.1_2.5m_bio_12.tif")
+BNA = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/Cuencas_BNA/Cuencas_BNA.shp")
+WORLDCLIM = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/factors/_worldclim/wc2.1_2.5m_bio_12.tif")
 OUT = ROOT / "figures_pub" / "out" / "fig01_study_area"
 
 # (slug, BNA cod_cuen, label, role) — numbered N->S automatically after centroid lookup
+# Codes verified against Cuencas_BNA.shp by max-overlap with each basin's
+# clipped DEM (2026-07-25); the previous list used a shifted numbering.
 BASINS = [
-    ("tilviche",    "022", "Tilviche-Loa",  "source"),
-    ("chanaral",    "027", "Chañaral",      "source"),
-    ("caracoles",   "023", "Loa-Caracoles", "source"),
+    ("tilviche",    "018", "Tilviche-Loa",  "source"),
+    ("chanaral",    "032", "Chañaral",      "source"),
+    ("caracoles",   "022", "Loa-Caracoles", "source"),
     ("taltal",      "029", "Taltal",        "source"),
-    ("copiapo",     "030", "Copiapó",       "target"),
-    ("huasco",      "032", "Huasco",        "target"),
+    ("copiapo",     "034", "Copiapó",       "target"),
+    ("huasco",      "038", "Huasco",        "target"),
     ("elqui",       "043", "Elqui",         "target"),
     ("limari",      "045", "Limarí",        "target"),
     ("choapa",      "047", "Choapa",        "source"),
-    ("maipo",       "060", "Maipo",         "source"),
-    ("rapel",       "061", "Rapel",         "source"),
-    ("bueno_puelo", "072", "Bueno-Puelo",   "source"),
+    ("maipo",       "057", "Maipo",         "source"),
+    ("rapel",       "060", "Rapel",         "source"),
+    ("bueno_puelo", "104", "Bueno-Puelo",   "source"),
     ("maule",       "073", "Maule",         "source"),
-    ("magallanes",  "120", "Magallanes",    "source"),
+    ("magallanes",  "125", "Magallanes",    "source"),
 ]
 
 

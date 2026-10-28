@@ -16,7 +16,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.metrics import f1_score, roc_auc_score
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path(__file__).resolve().parent.parent
 ML = ROOT / "data" / "ml_ready"
 DEVICE = torch.device("cpu")
 

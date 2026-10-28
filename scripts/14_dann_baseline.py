@@ -38,7 +38,7 @@ from _meta_lib import (
     load_features, sample_kshot, standardize_basin,
 )
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 OUT = ROOT / "results" / "dann"
 FIGS = ROOT / "figures"
 OUT.mkdir(parents=True, exist_ok=True)

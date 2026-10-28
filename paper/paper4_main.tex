@@ -1,5 +1,5 @@
 %% Paper 4 — Meta-learning for cross-basin landslide susceptibility transfer
-%% Target journal: Remote Sensing of Environment (Elsevier)
+%% Target journal: Remote Sensing Applications: Society and Environment (Elsevier)
 %% Template: elsarticle (same template works for RSE, ISPRS J, RSASE, etc.)
 
 \documentclass[preprint,12pt,3p,authoryear]{elsarticle}
@@ -30,13 +30,13 @@
 \graphicspath{{../figures_pub/out/}}
 
 % Journal label (changeable depending on submission)
-\journal{ISPRS Journal of Photogrammetry and Remote Sensing}
+\journal{Remote Sensing Applications: Society and Environment}
 
 \begin{document}
 
 \begin{frontmatter}
 
-\title{Meta-learning for cross-basin landslide susceptibility transfer across 14 Chilean watersheds: a remote sensing benchmark under spatial cross-validation}
+\title{Standard validation overestimates cross-basin landslide susceptibility transfer: a rigorously evaluated few-shot benchmark across 14 Chilean watersheds}
 
 %% Authors
 \author[usach]{Francisco Parra\corref{cor1}\fnref{orcid1}}
@@ -60,16 +60,16 @@
 
 %% Abstract
 \begin{abstract}
-Earth-observation data enable landslide susceptibility mapping in mountains, but in \emph{newly-studied} basins the cost of local inventories is prohibitive and models from data-rich basins transfer poorly across geological-climatic gradients. We present the first cross-basin benchmark of first-order meta-learning (Reptile and First-Order MAML, FOMAML) for landslide susceptibility across 14 Chilean watersheds spanning an extreme hyper-arid Atacama (Tilviche-Loa, $\sim$1\,mm/yr) to hyper-humid Patagonia (Magallanes, $\sim$2{,}630\,mm/yr) gradient over 27$^\circ$ of latitude, with features from Sentinel-2, MERIT-DEM, GLCM texture, and WorldClim on a 30\,m grid. We meta-train on 10 sources and evaluate $K$-shot transfer ($K \in \{1, 5, 10, 20\}$) on 4 targets via 24{,}000 adaptations under random and spatial cross-validation, with bootstrap 95\% confidence intervals. Under spatial cross-validation, meta-learning (Reptile or FOMAML) outperforms an Independent baseline at $K=1$ in all four targets, with a mean lift of $+5.5$\,percentage points (pp) $F_1$ and overlapping CIs between Reptile and FOMAML. The advantage decays monotonically and vanishes by $K=20$; meta-learned initializations reach $F_1 \approx 0.78$ within $\leq 3$ gradient steps. A Domain-Adversarial Neural Network baseline does not improve over Independent and underperforms by $-6$\,pp in the smallest target (Copiap\'o, $N=19$). Classical machine-learning baselines reach competitive peak $F_1$ at $K \geq 5$: meta-learning's principal benefit is rapid adaptation efficiency, not absolute discrimination. Source--target climate distance does not predict transfer success ($r=0.01$), suggesting the prior captures generic geomorphic rather than climate-specific signals. The framework applies to low-resource Earth-observation transfer in mountain-hazard monitoring across Latin America.
+Landslide susceptibility mapping in \emph{newly-studied} basins is limited by the cost of local inventories, and the transfer of models from data-rich basins is routinely assessed with protocols that overstate it. We quantify that overstatement---random cross-validation inflates $F_1$ by 5--27\,pp over spatially disjoint validation, balanced test sets hide that precision at operational prevalence falls to 0.07--0.10, and pooling correlated episodes narrows confidence intervals by $3.4\times$---and show that under rigorous evaluation a \emph{transferable geomorphic prior} nonetheless exists, which episodic meta-training extracts where naive pooled pretraining fails. We benchmark first-order meta-learning (Reptile, FOMAML) against Independent, fine-tuning, domain-adversarial and classical baselines across 14 Chilean basins spanning $\sim$32$^\circ$ of latitude ($\sim$1 to $\sim$1{,}900\,mm/yr), evaluating $K$-shot transfer ($K \in \{1, 5, 10, 20\}$) on four targets from a 30\,m MERIT-DEM stack. Under spatially disjoint validation, meta-learning outperforms Independent at $K=1$ in all four targets (mean lift $+5.5$ to $+6.2$ percentage points $F_1$), significant under a cluster-level paired test in three of four; the smallest ($N=19$) has too few spatial partitions to resolve it. The advantage decays monotonically and vanishes by $K=20$, and absolute discrimination remains modest in two heterogeneous targets ($F_1 \approx 0.5$). A pooled-source logistic regression is competitive at every $K$: the contribution is the prior itself and the narrow few-shot regime where it pays off, not a new state-of-the-art predictor. Domain-adversarial adaptation improves on Independent in no target. The benchmark, datasets and protocol are released to support low-resource Earth-observation transfer in mountain-hazard monitoring.
 \end{abstract}
 
 %% Highlights (3-5 bullets, max 85 chars each)
 \begin{highlights}
-\item First cross-basin meta-learning benchmark for landslide susceptibility in 14 basins.
-\item Meta-learning beats the Independent baseline at K=1 in 4/4 targets (spatial CV).
-\item Mean +5.5 pp F1 lift (up to +7.8 pp); Reptile and FOMAML within overlapping CIs.
-\item DANN underperforms by 6 pp F1 in the smallest target (Copiap\'o, N=19).
-\item Climate distance does not predict transfer success---meta-learning is robust.
+\item Random cross-validation inflates cross-basin transfer F1 by 5-27 percentage points.
+\item Balanced test sets hide that precision at operational prevalence is only 0.07-0.10.
+\item Meta-learning beats Independent at K=1 in 4/4 targets, significant in 3/4.
+\item Episodic meta-training extracts a transferable geomorphic prior; naive pooling fails.
+\item Pooled logistic regression stays competitive: the finding is the prior itself.
 \end{highlights}
 
 %% Keywords
@@ -107,7 +107,7 @@ remote sensing \sep spatial cross-validation \sep few-shot learning \sep Andes
 \begin{figure}[p]
     \centering
     \includegraphics[height=0.82\textheight]{fig01_study_area.pdf}
-    \caption{Fourteen Chilean watersheds spanning an extreme climate gradient---from the hyper-arid Atacama in the north ($\sim$1\,mm/yr) to hyper-humid Patagonia in the south ($\sim$2{,}630\,mm/yr), over 27$^\circ$ of latitude. Basins are numbered north-to-south; source basins (orange squares) are used for meta-training and target basins (blue circles) for $K$-shot evaluation. Polygons are color-coded by mean annual precipitation (WorldClim bio\_12, log scale). Inset: location within South America.}
+    \caption{Fourteen Chilean watersheds spanning an extreme climate gradient---from the hyper-arid Atacama in the north ($\sim$1\,mm/yr) to the humid Patagonian Andes in the south ($\sim$1{,}900\,mm/yr basin mean), over $\sim$32$^\circ$ of latitude. Basins are numbered north-to-south; source basins (orange squares) are used for meta-training and target basins (blue circles) for $K$-shot evaluation. Polygons are color-coded by mean annual precipitation (WorldClim bio\_12, log scale). Inset: location within South America.}
     \label{fig:study_area}
 \end{figure}
 
@@ -126,14 +126,14 @@ remote sensing \sep spatial cross-validation \sep few-shot learning \sep Andes
 \begin{figure*}[tb]
     \centering
     \includegraphics[width=\linewidth]{fig02_f1_vs_k_panel.pdf}
-    \caption{$F_1$ score versus number of support shots $K$ under \emph{random} cross-validation for the four target basins. Lines: mean across $50$ episodes $\times$ 3 seeds; shaded bands: bootstrap 95\% confidence intervals. FOMAML (pink) wins $K=1$ in 3 of 4 basins (Copiap\'o, Huasco, Limar\'i); advantage narrows to $<1$\,pp at $K=20$.}
+    \caption{$F_1$ score versus number of support shots $K$ under \emph{random} cross-validation for the four target basins. Lines: mean across $40$ episodes $\times$ 3 seeds; shaded bands: bootstrap 95\% confidence intervals. Meta-learning (Reptile or FOMAML) outperforms Independent at $K=1$ in all four basins; Reptile leads at $K=1$ in Elqui and Limar\'i, FOMAML leads in Huasco, and the two are within overlapping CIs in Copiap\'o. The advantage between meta-learning and Independent narrows to $<1$\,pp at $K=20$.}
     \label{fig:f1_random}
 \end{figure*}
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=0.85\linewidth]{fig03_spatial_lift_vs_k.pdf}
-    \caption{Mean $F_1$ advantage over the Independent baseline (averaged across the four target basins) under \emph{spatial} cross-validation. FOMAML achieves $+5.5$\,pp at $K=1$, decaying monotonically to $+0.5$\,pp at $K=20$. DANN exhibits a negative advantage of $\sim-2$\,pp across all $K$. Thin lines: per-target advantages; thick lines: cross-target means.}
+    \caption{Mean $F_1$ advantage over the Independent baseline (averaged across the four target basins) under \emph{spatial} cross-validation. FOMAML achieves $+5.5$\,pp at $K=1$, decaying monotonically to $-1.1$\,pp at $K=20$ (over the three basins where $K=20$ is feasible); Reptile decays from $+6.2$ to $+1.9$\,pp. DANN's advantage is negative at $K \leq 10$ ($-0.5$ to $-1.4$\,pp) and $+1.4$\,pp at $K=20$. Thin lines: per-target advantages; thick lines: cross-target means.}
     \label{fig:lift}
 \end{figure}
 
@@ -154,8 +154,21 @@ remote sensing \sep spatial cross-validation \sep few-shot learning \sep Andes
 % Main table
 \input{sections/table01_spatial_results.tex}
 
+\begin{figure*}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{fig07_susceptibility_maps.pdf}
+    \caption{Full-basin susceptibility maps from $K=1$-adapted models under the spatial-CV protocol, for Copiap\'o (top; smallest inventory, $N=19$, largest AUC and average-precision gain, Section~\ref{sec:results:prevalence}) and Elqui (bottom; a hard low-signal basin). Columns: Independent baseline (\textbf{a}, \textbf{c}) versus the meta-learned Reptile initialization (\textbf{b}, \textbf{d}), each the mean output over 3 seeds $\times$ 20 support draws, shown as within-basin susceptibility percentiles (raw $K=1$ outputs are uncalibrated; Section~\ref{sec:disc:limits}). Blue points: SERNAGEOMIN inventory events. The Reptile surface sharpens the ridge--valley contrast and lifts the inventory-bearing western tributaries of Copiap\'o into higher percentiles, consistent with its $+5.7$\,pp $F_1$ edge; in Elqui the diffuse pattern and scattered inventory make the low $F_1 \approx 0.48$ (Table~\ref{tab:spatial_results}) visible on the ground. The $50$\,km scale bar and per-panel spatial-CV $F_1$ ($K=1$) are annotated.}
+    \label{fig:maps}
+\end{figure*}
+
 % Extended baselines table
 \input{sections/table02_extended_baselines.tex}
+
+% Cluster-level paired significance table
+\input{sections/table03_cluster_paired.tex}
+
+% Negative-sampling sensitivity table
+\input{sections/table04_negatives_sensitivity.tex}
 
 \begin{figure*}[ht]
     \centering
@@ -196,8 +209,8 @@ The authors thank SERNAGEOMIN (Servicio Nacional de Geolog\'ia y Miner\'ia de Ch
 \section*{Data and code availability}
 \begin{itemize}
     \item Code (pipeline scripts, figure-generation scripts, LaTeX source, aggregated benchmark summaries): \url{https://github.com/franciscoparrao/paper4-meta-landslide}.
-    \item Per-basin ML-ready H5 datasets and CNN patch tensors are regenerated from public sources (SERNAGEOMIN \emph{catastro de remociones en masa}; MERIT-DEM; Copernicus Sentinel-2 L2A; WorldClim 2.1; DGA Cuencas-BNA polygons) following the instructions in the repository README; a Zenodo deposit of the harmonised intermediate products is planned upon acceptance.
-    \item SurtGIS toolkit, used for terrain and hydrology factor computation: \url{https://github.com/franciscoparrao/surtgis}.
+    \item Per-basin ML-ready H5 datasets and CNN patch tensors are regenerated from public sources (SERNAGEOMIN \emph{catastro de remociones en masa}; MERIT-DEM; WorldClim 2.1; SERNAGEOMIN geology; DGA Cuencas-BNA polygons) following the instructions in the repository README; a Zenodo deposit of the harmonised intermediate products is planned upon acceptance.
+    \item SurtGIS toolkit, used for terrain and hydrology factor computation, is described in \citet{parra2026surtgis} and available at \url{https://github.com/franciscoparrao/surtgis}.
 \end{itemize}
 
 %% ============================================================
@@ -220,6 +233,13 @@ During the preparation of this work the authors used Claude Code (Anthropic) to 
     \includegraphics[width=\linewidth]{figS1_auc_vs_k_panel.pdf}
     \caption{ROC-AUC versus $K$ under random cross-validation. Pattern consistent with $F_1$ results in Figure~\ref{fig:f1_random}.}
     \label{fig:auc_random}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figS11_precision_recall_prevalence.pdf}
+    \caption{Precision--recall re-weighted to a realistic landslide prevalence ($\pi=0.05$) for the pooled $K=1$ spatial-CV queries (Independent vs.\ Reptile), per target basin. Curves are obtained from the balanced operating characteristics via $\text{precision}(\pi)=\pi\,\text{TPR}/[\pi\,\text{TPR}+(1-\pi)\,\text{FPR}]$; the dotted line marks the no-skill baseline (precision $=\pi$). Absolute precision is low at operational prevalence---most flagged pixels are false positives, a property masked by the balanced $F_1$---yet the meta-learned Reptile prior dominates Independent in average precision (AP, legend) in all four targets, confirming the $K=1$ advantage is prevalence-robust (Section~\ref{sec:results:prevalence}).}
+    \label{fig:pr_prevalence}
 \end{figure*}
 
 \begin{figure*}[ht]
@@ -281,7 +301,7 @@ During the preparation of this work the authors used Claude Code (Anthropic) to 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\linewidth]{figS8_kfolds_sensitivity.pdf}
-    \caption{FOMAML $-$ Independent mean $F_1$ lift as a function of the number of spatial CV folds $K_{\text{folds}} \in \{5, 10, 20\}$. The meta-learning advantage persists at all fold granularities (lift $+0.4$ to $+2.6$~pp), demonstrating that the reported advantage is not an artifact of the $K_{\text{folds}}=5$ choice.}
+    \caption{FOMAML $-$ Independent mean $F_1$ lift as a function of the number of spatial CV folds $K_{\text{folds}} \in \{5, 10, 20\}$. The meta-learning advantage persists at all fold granularities (per-target mean lift $+0.4$ to $+2.6$~pp, averaged over $K \in \{5, 10\}$ shots and three seeds---$K=1$, where the advantage is largest, is not part of this experiment), demonstrating that the reported advantage is not an artifact of the $K_{\text{folds}}=5$ choice.}
     \label{fig:kfolds}
 \end{figure}
 

@@ -21,8 +21,8 @@ import rasterio
 from rasterio.features import rasterize
 from rasterio.warp import Resampling, reproject
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
-PAPER1 = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/factors")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+PAPER1 = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/factors")
 WORLDCLIM = PAPER1 / "_worldclim"
 GEOLOGY_SHP = Path("/home/franciscoparrao/proyectos/Agentes/Remociones (2)/"
                     "Shape_Mapa_Geol_gico_Chile_1_1.000.000/"

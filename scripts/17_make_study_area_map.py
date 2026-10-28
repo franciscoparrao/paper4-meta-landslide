@@ -16,16 +16,16 @@ import numpy as np
 import rasterio
 from rasterio.mask import mask as rio_mask
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
-BNA = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/Cuencas_BNA/Cuencas_BNA.shp")
-WORLDCLIM_BIO12 = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/factors/_worldclim/wc2.1_2.5m_bio_12.tif")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+BNA = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/Cuencas_BNA/Cuencas_BNA.shp")
+WORLDCLIM_BIO12 = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/factors/_worldclim/wc2.1_2.5m_bio_12.tif")
 
 # Basin metadata: (slug, BNA cod_cuen, label, role, lat_centroid, lon_centroid)
 BASINS = [
-    ("chanaral", "027", "Chañaral",  "source", -26.3, -69.6),
+    ("chanaral", "032", "Chañaral",  "source", -26.3, -69.6),
     ("taltal",   "029", "Taltal",     "source", -25.4, -69.9),
-    ("copiapo",  "030", "Copiapó",    "target", -27.5, -69.7),
-    ("huasco",   "032", "Huasco",     "target", -28.7, -70.2),
+    ("copiapo",  "034", "Copiapó",    "target", -27.5, -69.7),
+    ("huasco",   "038", "Huasco",     "target", -28.7, -70.2),
     ("elqui",    "043", "Elqui",      "target", -30.0, -70.4),
     ("limari",   "045", "Limarí",     "target", -30.8, -70.6),
     ("choapa",   "047", "Choapa",     "source", -31.6, -70.8),

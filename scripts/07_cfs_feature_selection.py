@@ -24,7 +24,7 @@ import h5py
 import numpy as np
 import pandas as pd
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 ALIGNED = ROOT / "data" / "aligned"
 N_BINS = 10
 SEED = 42

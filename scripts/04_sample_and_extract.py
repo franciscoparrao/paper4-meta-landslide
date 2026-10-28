@@ -44,8 +44,8 @@ def read_h5(path: Path) -> pd.DataFrame:
     with h5py.File(path, "r") as f:
         return pd.DataFrame({k: f[k][:] for k in f.keys()})
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
-PAPER1 = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/factors")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+PAPER1 = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/factors")
 INV_DIR = ROOT / "data" / "inventarios"
 OUT_DIR = ROOT / "data" / "samples"
 OUT_DIR.mkdir(parents=True, exist_ok=True)

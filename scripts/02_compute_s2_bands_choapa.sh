@@ -5,7 +5,7 @@
 set -uo pipefail
 
 SURTGIS="/home/franciscoparrao/proyectos/surtgis/target/release/surtgis"
-ROOT="/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer"
+ROOT="/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer"
 DEM="$ROOT/factors/choapa/dem_30m.tif"
 OUTDIR="$ROOT/factors/choapa/imagery"
 LOGDIR="$ROOT/factors/choapa/imagery/logs"

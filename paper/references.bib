@@ -115,9 +115,10 @@
 
 @inproceedings{tseng2022timm,
   author    = {Tseng, Gabriel and Zvonkov, Ivan and Nakalembe, Catherine and Kerner, Hannah},
-  title     = {Lightweight, pre-trained transformers for remote sensing timeseries},
+  title     = {Lightweight, Pre-trained Transformers for Remote Sensing Timeseries},
   booktitle = {NeurIPS Workshop on Tackling Climate Change with Machine Learning},
-  year      = {2022},
+  year      = {2023},
+  note      = {arXiv:2304.14065},
 }
 
 @article{ma2025metalsm,
@@ -161,16 +162,22 @@
 
 @phdthesis{parra2025tesis,
   author = {Parra, Francisco},
-  title  = {Predicci{\'o}n y caracterizaci{\'o}n de remociones en masa en cuencas {\'a}ridas del norte de {C}hile mediante aprendizaje autom{\'a}tico y modelos basados en agentes},
-  school = {Universidad de Chile},
+  title  = {Metodolog{\'i}a de predicci{\'o}n de desastres originados por remociones en masa},
+  school = {Universidad de Santiago de Chile},
+  type   = {Ph.{D}. thesis},
+  month  = {11},
   year   = {2025},
+  doi    = {10.13140/RG.2.2.15488.29441},
 }
 
-@misc{parra2025surtgis,
-  author = {Parra, Francisco},
-  title  = {{SurtGIS}: a {Rust}-based geospatial toolkit for landslide susceptibility analysis},
-  year   = {2025},
-  howpublished = {GitHub repository, \url{https://github.com/franciscoparrao/surtgis}},
+@article{parra2026surtgis,
+  author  = {Parra, Francisco},
+  title   = {{SurtGIS}: A high-performance raster geospatial analysis library in {Rust} with {WebAssembly} and {Python} support},
+  journal = {Environmental Modelling \& Software},
+  volume  = {204},
+  pages   = {107102},
+  year    = {2026},
+  doi     = {10.1016/j.envsoft.2026.107102},
 }
 
 % ---- Recent RSE citations to signal in-conversation with the journal community ----
@@ -343,7 +350,7 @@
 
 @article{ng2025crossresolution,
   author  = {Ng, Charles W. W. and Pan, Tianli and Ma, Peifeng},
-  title   = {A novel deep learning model for landslide mapping using cross-resolution change detection},
+  title   = {A novel deep learning model for landslide mapping using cross-resolution change technique},
   journal = {ISPRS Journal of Photogrammetry and Remote Sensing},
   volume  = {229},
   pages   = {254--269},
@@ -363,7 +370,7 @@
 
 @article{deijns2024semisupervised,
   author  = {Deijns, Axel A. J. and Mich{\'e}a, David and D{\'e}prez, Aline and Malet, Jean-Philippe and others},
-  title   = {A semi-supervised multi-temporal landslide and flash flood event detection methodology},
+  title   = {A semi-supervised multi-temporal landslide and flash flood event detection methodology for unexplored regions using massive satellite image time series},
   journal = {ISPRS Journal of Photogrammetry and Remote Sensing},
   volume  = {215},
   pages   = {400--418},
@@ -371,4 +378,48 @@
   doi     = {10.1016/j.isprsjprs.2024.07.010},
 }
 
+% ---- Foundational ISPRS-community references ----
 
+@article{heipke2020deeplearning,
+  author  = {Heipke, Christian and Rottensteiner, Franz},
+  title   = {Deep learning for geometric and semantic tasks in photogrammetry and remote sensing},
+  journal = {Geo-spatial Information Science},
+  volume  = {23},
+  number  = {1},
+  pages   = {10--19},
+  year    = {2020},
+  doi     = {10.1080/10095020.2020.1718003},
+}
+
+@article{lin2020activelearning,
+  author  = {Lin, Yaping and Vosselman, George and Cao, Yanpeng and Yang, Michael Ying},
+  title   = {Active and incremental learning for semantic {ALS} point cloud segmentation},
+  journal = {ISPRS Journal of Photogrammetry and Remote Sensing},
+  volume  = {169},
+  pages   = {73--92},
+  year    = {2020},
+  doi     = {10.1016/j.isprsjprs.2020.09.003},
+}
+
+@article{mayer2008object,
+  author  = {Mayer, Helmut},
+  title   = {Object extraction in photogrammetric computer vision},
+  journal = {ISPRS Journal of Photogrammetry and Remote Sensing},
+  volume  = {63},
+  number  = {2},
+  pages   = {213--222},
+  year    = {2008},
+  doi     = {10.1016/j.isprsjprs.2007.08.008},
+}
+
+
+
+@article{abdelkader2025nonlandslide,
+  author  = {Abdelkader, Mohamed M. and Daoud, Abazar M. A. and Abdel-Gawad, Amr Gouda and Csamer, {\'A}rp{\'a}d},
+  title   = {Improving landslide susceptibility mapping: The role of non-landslide sample selection in machine learning models},
+  journal = {Remote Sensing Applications: Society and Environment},
+  year    = {2025},
+  volume  = {40},
+  pages   = {101759},
+  doi     = {10.1016/j.rsase.2025.101759},
+}

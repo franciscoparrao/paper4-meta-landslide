@@ -36,7 +36,7 @@ from _cnn_lib import (
 )
 from _meta_lib import bootstrap_ci
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
 SAMPLES = ROOT / "data" / "samples"
 OUT = ROOT / "results" / "unet_baseline"
 OUT.mkdir(parents=True, exist_ok=True)

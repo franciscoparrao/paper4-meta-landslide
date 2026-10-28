@@ -16,10 +16,10 @@ from pathlib import Path
 import geopandas as gpd
 import pandas as pd
 
-ROOT = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer")
-PAPER1_INV = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/basin_inventory")
+ROOT = Path("/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer")
+PAPER1_INV = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/basin_inventory")
 LANDSLIDE_DS = Path("/home/franciscoparrao/proyectos/landslide_dataset")
-BNA = Path("/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/Cuencas_BNA/Cuencas_BNA.shp")
+BNA = Path("/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/Cuencas_BNA/Cuencas_BNA.shp")
 OUT_DIR = ROOT / "data" / "inventarios"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

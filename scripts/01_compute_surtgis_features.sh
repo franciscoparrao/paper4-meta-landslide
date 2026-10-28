@@ -9,8 +9,8 @@
 set -euo pipefail
 
 SURTGIS="/home/franciscoparrao/proyectos/surtgis/target/release/surtgis"
-PAPER1_FACTORS="/home/franciscoparrao/proyectos/postdoc/papers/paper1_susceptibilidad/factors"
-PAPER4_ROOT="/home/franciscoparrao/proyectos/postdoc/papers/paper4_meta_learning_transfer"
+PAPER1_FACTORS="/mnt/kingston/proyectos/postdoc/papers/paper1_susceptibilidad/factors"
+PAPER4_ROOT="/mnt/kingston/proyectos/postdoc/papers/paper4_meta_learning_transfer"
 OUT_BASE="$PAPER4_ROOT/factors_extra"
 
 ALL_BASINS=(02_costeras_tilviche_loa 03_costeras_loa_caracoles 04_rio_salado 05_rio_copiapo 06_rio_huasco 07_rio_elqui 08_rio_limari 09_rio_maipo 10_rio_rapel 11_rio_maule 14_costeras_bueno_puelo 15_costeras_magallanes taltal choapa)
