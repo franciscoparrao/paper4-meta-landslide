@@ -3,6 +3,7 @@
     \caption{Correlation-based feature selection run on all 14 basins (the submitted version, which used target-basin labels) versus on the 10 source basins only (this revision). Step = order of entry in the forward search; SU = symmetric uncertainty with the class label. The source-only run selects 9 of the original 11 features; geomorphons and annual precipitation (bio\_12) are not selected. Source: \texttt{results/stats/cfs\_comparison.csv}.}
     \label{tab:cfs_comparison}
     \footnotesize
+    \begin{adjustbox}{max width=\linewidth}
     \begin{tabular}{lcccc}
         \toprule
         \textbf{Feature} & \textbf{Step (all 14)} & \textbf{SU (all 14)} & \textbf{Step (source 10)} & \textbf{SU (source 10)} \\
@@ -20,4 +21,5 @@
         \texttt{climate\_\_bio\_12} & 11 & 0.0799 & — & — \\
         \bottomrule
     \end{tabular}
+    \end{adjustbox}
 \end{table}

@@ -1,24 +1,33 @@
 \begin{table*}[ht]
     \centering
-    \caption{Domain weighting versus episodic training at $K=1$ under spatial cross-validation (source-only features, five seeds, identical partitions and support draws for all five initialisations). Top: mean $F_1$. Bottom: cluster-level paired contrasts (pp; mean [95\% hierarchical-bootstrap CI]; two-sided Wilcoxon $p$) isolating the effect of basin-balanced weighting in pooled pre-training, of episodic training given balanced weighting, and of adding an episodic phase after pooled pre-training. Source: \texttt{results/pooled\_vs\_episodic/\{summary,cluster\_paired\}.csv}.}
+    \caption{Domain weighting versus episodic training at $K=1$ under spatial cross-validation (source-only features, five seeds, identical partitions and support draws for all five initialisations). Top: mean $F_1$ per target. Bottom: cluster-level paired contrasts (mean difference in pp $F_1$ with 95\% hierarchical-bootstrap CI; $^{*}$CI excludes zero; two-sided Wilcoxon $p$ on the $n_c$ partition differences) isolating the effect of basin-balanced weighting in pooled pre-training, of episodic training given balanced weighting, and of adding an episodic phase after pooled pre-training. Source: \texttt{results/pooled\_vs\_episodic/\{summary,cluster\_paired\}.csv}.}
     \label{tab:pooled_vs_episodic}
     \footnotesize
-    \begin{tabular}{lcccc}
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{llcccc}
         \toprule
-        & \textbf{Copiap\'o} & \textbf{Huasco} & \textbf{Elqui} & \textbf{Limar\'i} \\
+        & & \textbf{Copiap\'o} & \textbf{Huasco} & \textbf{Elqui} & \textbf{Limar\'i} \\
         \midrule
-        \multicolumn{5}{l}{\textit{Mean $F_1$ at $K=1$}} \\
-        Independent & 0.522 & 0.680 & 0.450 & 0.433 \\
-        Fine-tune & 0.552 & 0.679 & 0.457 & 0.424 \\
-        Fine-tune (balanced) & 0.570 & 0.687 & 0.468 & 0.451 \\
-        Reptile & 0.556 & 0.691 & 0.474 & 0.453 \\
-        Pretrain$\rightarrow$Reptile & 0.566 & 0.688 & 0.471 & 0.446 \\
+        \multicolumn{6}{l}{\textit{Mean $F_1$ at $K=1$}} \\
+        Independent & & 0.522 & 0.680 & 0.450 & 0.433 \\
+        Fine-tune & & 0.552 & 0.679 & 0.457 & 0.424 \\
+        Fine-tune (balanced) & & 0.570 & 0.687 & 0.468 & 0.451 \\
+        Reptile & & 0.556 & 0.691 & 0.474 & 0.453 \\
+        Pretrain$\rightarrow$Reptile & & 0.566 & 0.688 & 0.471 & 0.446 \\
         \midrule
-        \multicolumn{5}{l}{\textit{Cluster-paired contrasts at $K=1$ (pp)}} \\
-        Balanced $-$ concat (domain weighting) & $+1.7$ [-1.6, +5.1], $p=0.45$ & $+0.7$ [-0.2, +1.6], $p=0.23$ & $+1.1$ [+0.2, +2.1]$^{*}$, $p<0.01$ & $+2.6$ [+0.8, +4.5]$^{*}$, $p=0.02$ \\
-        Reptile $-$ balanced (episodic vs.\ pooled) & $-1.4$ [-5.2, +1.9], $p=0.92$ & $+0.5$ [-0.0, +0.9], $p=0.16$ & $+0.6$ [-0.6, +1.6], $p=0.13$ & $+0.2$ [-1.8, +2.0], $p=0.92$ \\
-        Pretrain$\rightarrow$Reptile $-$ concat & $+1.4$ [-0.2, +2.8], $p=0.06$ & $+0.9$ [+0.4, +1.5]$^{*}$, $p<0.01$ & $+1.4$ [+0.4, +2.4]$^{*}$, $p<0.01$ & $+2.1$ [+0.8, +3.6]$^{*}$, $p<0.01$ \\
-        Reptile $-$ Independent & $+3.3$ [-0.3, +6.7], $p=0.08$ & $+1.1$ [+0.1, +2.1]$^{*}$, $p=0.05$ & $+2.4$ [+0.9, +3.9]$^{*}$, $p<0.01$ & $+2.0$ [+0.2, +4.0]$^{*}$, $p=0.09$ \\
+        \textbf{Contrast (pp)} & & \textbf{Copiap\'o} & \textbf{Huasco} & \textbf{Elqui} & \textbf{Limar\'i} \\
+        \midrule
+        Balanced $-$ concat pooled (domain weighting) & $\Delta$ & $+1.7$ [-1.6, +5.1] & $+0.7$ [-0.2, +1.6] & $+1.1$ [+0.2, +2.1]$^{*}$ & $+2.6$ [+0.8, +4.5]$^{*}$ \\
+         & & \scriptsize $p=0.45$, $n_c=15$ & \scriptsize $p=0.23$, $n_c=10$ & \scriptsize $p<0.01$, $n_c=25$ & \scriptsize $p=0.02$, $n_c=22$ \\
+        Reptile $-$ balanced pooled (episodic vs.\ pooled) & $\Delta$ & $-1.4$ [-5.2, +1.9] & $+0.5$ [-0.0, +0.9] & $+0.6$ [-0.6, +1.6] & $+0.2$ [-1.8, +2.0] \\
+         & & \scriptsize $p=0.92$, $n_c=15$ & \scriptsize $p=0.16$, $n_c=10$ & \scriptsize $p=0.13$, $n_c=25$ & \scriptsize $p=0.92$, $n_c=22$ \\
+        Pretrain$\rightarrow$Reptile $-$ concat pooled & $\Delta$ & $+1.4$ [-0.2, +2.8] & $+0.9$ [+0.4, +1.5]$^{*}$ & $+1.4$ [+0.4, +2.4]$^{*}$ & $+2.1$ [+0.8, +3.6]$^{*}$ \\
+         & & \scriptsize $p=0.06$, $n_c=15$ & \scriptsize $p<0.01$, $n_c=10$ & \scriptsize $p<0.01$, $n_c=25$ & \scriptsize $p<0.01$, $n_c=22$ \\
+        Pretrain$\rightarrow$Reptile $-$ Reptile & $\Delta$ & $+1.0$ [-1.0, +3.2] & $-0.3$ [-1.1, +0.7] & $-0.3$ [-0.9, +0.2] & $-0.7$ [-3.0, +1.7] \\
+         & & \scriptsize $p=0.60$, $n_c=15$ & \scriptsize $p=0.49$, $n_c=10$ & \scriptsize $p=0.58$, $n_c=25$ & \scriptsize $p=0.59$, $n_c=22$ \\
+        Reptile $-$ Independent & $\Delta$ & $+3.3$ [-0.3, +6.7] & $+1.1$ [+0.1, +2.1]$^{*}$ & $+2.4$ [+0.9, +3.9]$^{*}$ & $+2.0$ [+0.2, +4.0]$^{*}$ \\
+         & & \scriptsize $p=0.08$, $n_c=15$ & \scriptsize $p=0.05$, $n_c=10$ & \scriptsize $p<0.01$, $n_c=25$ & \scriptsize $p=0.09$, $n_c=22$ \\
         \bottomrule
     \end{tabular}
+    \end{adjustbox}
 \end{table*}

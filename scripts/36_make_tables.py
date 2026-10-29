@@ -49,7 +49,7 @@ def table01():
              ", ".join(f"{LAB[t]} {nc[t]}/25" for t in TARGETS) +
              r" (Section~\ref{sec:methods:protocol}); total realized $K$-shot adaptations: " + f"{n_runs:,}".replace(",", "{,}") +
              r". Source: \texttt{results/spatial\_benchmark/summary.csv}, \texttt{results/stats/hierarchical\_bootstrap.csv}.}",
-             r"    \label{tab:spatial_results}", r"    \footnotesize", r"    \begin{tabular}{llccccc}", r"        \toprule",
+             r"    \label{tab:spatial_results}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\textwidth}", r"    \begin{tabular}{llccccc}", r"        \toprule",
              r"        \textbf{Target} & \textbf{$K$} & " + " & ".join(f"\\textbf{{{MLAB[m]}}}" for m in methods) + r" \\",
              r"        \midrule"]
     for ti, t in enumerate(TARGETS):
@@ -63,7 +63,7 @@ def table01():
             first = False
         if ti < len(TARGETS) - 1:
             lines.append(r"        \midrule")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "table01_spatial_results.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -76,7 +76,7 @@ def table02():
              r"additional baselines under spatial cross-validation with the source-only feature set and five seeds. Best per row in "
              r"\textbf{bold}. For comparison against the primary methods see Table~\ref{tab:spatial_results}. "
              r"Source: \texttt{results/extended\_baselines/summary.csv}.}",
-             r"    \label{tab:extended_baselines}", r"    \footnotesize", r"    \begin{tabular}{llccc}", r"        \toprule",
+             r"    \label{tab:extended_baselines}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\textwidth}", r"    \begin{tabular}{llccc}", r"        \toprule",
              r"        \textbf{Target} & \textbf{$K$} & " + " & ".join(f"\\textbf{{{MLAB[m]}}}" for m in methods) + r" \\",
              r"        \midrule"]
     for ti, t in enumerate(TARGETS):
@@ -90,7 +90,7 @@ def table02():
             first = False
         if ti < len(TARGETS) - 1:
             lines.append(r"        \midrule")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "table02_extended_baselines.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -115,7 +115,7 @@ def table03():
              r"\{Reptile, FOMAML\}). The \textbf{primary, pre-specified hypothesis} is the joint row: a permutation test stratified by target "
              r"(sign flips of the cluster differences within each target, 20{,}000 permutations; statistic = mean of per-target mean differences). "
              r"Source: \texttt{results/stats/cluster\_paired\_vs\_independent.csv}, \texttt{secondary\_holm\_r1.csv}, \texttt{joint\_tests\_r1.csv}.}",
-             r"    \label{tab:cluster_paired}", r"    \footnotesize", r"    \begin{tabular}{llcccc}", r"        \toprule",
+             r"    \label{tab:cluster_paired}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\textwidth}", r"    \begin{tabular}{llcccc}", r"        \toprule",
              r"        \textbf{Target} & \textbf{Method} & \textbf{$\Delta F_1$ vs Indep.\ (pp) [95\% CI]} & \textbf{Clusters $>0$} & "
              r"\textbf{Wilcoxon $p$} & \textbf{$p_{\text{Holm}}$} \\", r"        \midrule"]
     for ti, t in enumerate(TARGETS):
@@ -139,7 +139,7 @@ def table03():
         name = f"\\textbf{{{MLAB[m]}}}" if m == "reptile" else MLAB[m]
         lines.append(f"        {lab} ($n_c={int(j.n_clusters_total)}$) & {name} & ${j.joint_mean_diff_pp:+.1f}$ "
                      f"[{j.ci_lo_pp:+.1f}, {j.ci_hi_pp:+.1f}] & --- & {fmt_p(j.perm_p_two_sided)} & --- \\\\")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "table03_cluster_paired.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -147,34 +147,37 @@ def table05():
     s = pd.read_csv(R / "pooled_vs_episodic/summary.csv")
     cp = pd.read_csv(R / "pooled_vs_episodic/cluster_paired.csv")
     methods = ["independent", "finetune", "finetune_balanced", "reptile", "pretrain_then_reptile"]
-    contrasts = [("finetune_balanced - finetune", "Balanced $-$ concat (domain weighting)"),
-                 ("reptile - finetune_balanced", "Reptile $-$ balanced (episodic vs.\\ pooled)"),
-                 ("pretrain_then_reptile - finetune", "Pretrain$\\rightarrow$Reptile $-$ concat"),
+    contrasts = [("finetune_balanced - finetune", "Balanced $-$ concat pooled (domain weighting)"),
+                 ("reptile - finetune_balanced", "Reptile $-$ balanced pooled (episodic vs.\\ pooled)"),
+                 ("pretrain_then_reptile - finetune", "Pretrain$\\rightarrow$Reptile $-$ concat pooled"),
+                 ("pretrain_then_reptile - reptile", "Pretrain$\\rightarrow$Reptile $-$ Reptile"),
                  ("reptile - independent", "Reptile $-$ Independent")]
     lines = [r"\begin{table*}[ht]", r"    \centering",
              r"    \caption{Domain weighting versus episodic training at $K=1$ under spatial cross-validation (source-only features, "
-             r"five seeds, identical partitions and support draws for all five initialisations). Top: mean $F_1$. Bottom: cluster-level "
-             r"paired contrasts (pp; mean [95\% hierarchical-bootstrap CI]; two-sided Wilcoxon $p$) isolating the effect of basin-balanced "
-             r"weighting in pooled pre-training, of episodic training given balanced weighting, and of adding an episodic phase after pooled "
-             r"pre-training. Source: \texttt{results/pooled\_vs\_episodic/\{summary,cluster\_paired\}.csv}.}",
-             r"    \label{tab:pooled_vs_episodic}", r"    \footnotesize", r"    \begin{tabular}{lcccc}", r"        \toprule",
-             r"        & " + " & ".join(f"\\textbf{{{LAB[t]}}}" for t in TARGETS) + r" \\", r"        \midrule",
-             r"        \multicolumn{5}{l}{\textit{Mean $F_1$ at $K=1$}} \\"]
+             r"five seeds, identical partitions and support draws for all five initialisations). Top: mean $F_1$ per target. Bottom: "
+             r"cluster-level paired contrasts (mean difference in pp $F_1$ with 95\% hierarchical-bootstrap CI; $^{*}$CI excludes zero; "
+             r"two-sided Wilcoxon $p$ on the $n_c$ partition differences) isolating the effect of basin-balanced weighting in pooled "
+             r"pre-training, of episodic training given balanced weighting, and of adding an episodic phase after pooled pre-training. "
+             r"Source: \texttt{results/pooled\_vs\_episodic/\{summary,cluster\_paired\}.csv}.}",
+             r"    \label{tab:pooled_vs_episodic}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\textwidth}",
+             r"    \begin{tabular}{llcccc}", r"        \toprule",
+             r"        & & " + " & ".join(f"\\textbf{{{LAB[t]}}}" for t in TARGETS) + r" \\", r"        \midrule",
+             r"        \multicolumn{6}{l}{\textit{Mean $F_1$ at $K=1$}} \\"]
     k1 = s[s.K == 1].pivot(index="method", columns="target", values="f1_mean")
     for m in methods:
-        lines.append(f"        {MLAB[m]} & " + " & ".join(f"{k1.loc[m, t]:.3f}" for t in TARGETS) + r" \\")
-    lines.append(r"        \midrule")
-    lines.append(r"        \multicolumn{5}{l}{\textit{Cluster-paired contrasts at $K=1$ (pp)}} \\")
+        lines.append(f"        {MLAB[m]} & & " + " & ".join(f"{k1.loc[m, t]:.3f}" for t in TARGETS) + r" \\")
+    lines += [r"        \midrule", r"        \textbf{Contrast (pp)} & & " + " & ".join(f"\\textbf{{{LAB[t]}}}" for t in TARGETS) + r" \\", r"        \midrule"]
     c1 = cp[cp.K == 1].set_index(["contrast", "target"])
     for key, lab in contrasts:
-        cells = []
+        d_cells, p_cells = [], []
         for t in TARGETS:
             r = c1.loc[(key, t)]
             star = "$^{*}$" if r.ci_excludes_0 else ""
-            ptxt = "$p<0.01$" if r.wilcoxon_p < 0.01 else f"$p={r.wilcoxon_p:.2f}$"
-            cells.append(f"${r.mean_diff_pp:+.1f}$ [{r.ci_lo_pp:+.1f}, {r.ci_hi_pp:+.1f}]{star}, {ptxt}")
-        lines.append(f"        {lab} & " + " & ".join(cells) + r" \\")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+            d_cells.append(f"${r.mean_diff_pp:+.1f}$ [{r.ci_lo_pp:+.1f}, {r.ci_hi_pp:+.1f}]{star}")
+            p_cells.append(("$p<0.01$" if r.wilcoxon_p < 0.01 else f"$p={r.wilcoxon_p:.2f}$") + f", $n_c={int(r.n_clusters)}$")
+        lines.append(f"        {lab} & $\\Delta$ & " + " & ".join(d_cells) + r" \\")
+        lines.append(f"         & & " + " & ".join(f"\\scriptsize {c}" for c in p_cells) + r" \\")
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "table05_pooled_vs_episodic.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -192,18 +195,19 @@ def table04():
              r"shifts with the sampling choice (consistent with \citealt{abdelkader2025nonlandslide}), but the meta-learning \emph{lift} stays "
              f"positive throughout (range ${lo:+.1f}$ to ${hi:+.1f}$\\,pp) and \\emph{{increases}} under the slope-matched condition. "
              r"Source: \texttt{results/stats/negatives\_sensitivity.csv}.}",
-             r"    \label{tab:neg_sensitivity}", r"    \footnotesize", r"    \begin{tabular}{llccc}", r"        \toprule",
+             r"    \label{tab:neg_sensitivity}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\textwidth}", r"    \begin{tabular}{llccc}", r"        \toprule",
              r"        \textbf{Target} & \textbf{Negative-sampling strategy} & \textbf{Indep.\ $F_1$} & \textbf{Reptile $F_1$} & \textbf{Lift (pp)} \\",
              r"        \midrule"]
-    for ti, t in enumerate([x for x in TARGETS if x in set(d.target)]):
+    tg = [x for x in TARGETS if x in set(d.target)]
+    for ti, t in enumerate(tg):
         sub = d[d.target == t]; first = True
         for _, r in sub.iterrows():
             lab = f"{LAB[t]} ($N={int(r.n_pos)}$)" if first else ""
             lines.append(f"        {lab} & {cond.get(r.condition, r.condition)} & {r.f1_independent:.3f} & {r.f1_reptile:.3f} & ${r.lift_pp:+.1f}$ \\\\")
             first = False
-        if ti < len(set(d.target)) - 1:
+        if ti < len(tg) - 1:
             lines.append(r"        \midrule")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "table04_negatives_sensitivity.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -218,7 +222,7 @@ def tableS_basins():
              r"(Cha\~naral: 910 mapped non-landslide points; Taltal: 300 points expanded by a 60\,m buffer and completed with random samples); "
              r"the other twelve basins use random sampling outside a 500\,m exclusion buffer around positives. All basins are balanced 1:1. "
              r"`Dominant trigger' is taken from the inventory source and is indicative only. Source: \texttt{results/stats/basin\_summary.csv}.}",
-             r"    \label{tab:basin_summary}", r"    \scriptsize", r"    \begin{tabular}{llp{3.6cm}rrrrp{3.0cm}r}", r"        \toprule",
+             r"    \label{tab:basin_summary}", r"    \scriptsize", r"    \begin{adjustbox}{max width=\textwidth}", r"    \begin{tabular}{llp{3.6cm}rrrrp{3.0cm}r}", r"        \toprule",
              r"        \textbf{Basin} & \textbf{Role} & \textbf{Inventory} & \textbf{Events} & \textbf{Expl.\ neg.} & \textbf{Pos.\ px} & \textbf{Neg.\ px} & \textbf{Dominant trigger} & \textbf{Share src.\ pos.} \\",
              r"        \midrule"]
     for _, r in d.iterrows():
@@ -226,7 +230,7 @@ def tableS_basins():
         lines.append(f"        {LAB.get(r.basin, esc(r.basin.replace('_', ' ').title()))} & {r.role} & {esc(r.inventory_source)} & "
                      f"{int(r.n_inventory_positives)} & {int(r.n_explicit_negative_points)} & {int(r.pos_pixels)} & {int(r.neg_pixels)} & "
                      f"{esc(r.dominant_trigger)} & {share} \\\\")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "tableS_basin_summary.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -240,7 +244,7 @@ def tableS_folds():
              r"both classes; all exclusions are single-class held-out clusters. ARI is the mean [min, max] adjusted Rand index between the partitions of different "
              r"seeds (1 = identical partitions). NN distance is the distance from each held-out pixel to the nearest pixel of the training clusters, "
              r"summarised over valid partitions. Source: \texttt{results/stats/fold\_validity.csv}, \texttt{fold\_overlap.csv}, \texttt{fold\_nn\_distance.csv}.}",
-             r"    \label{tab:fold_diagnostics}", r"    \footnotesize", r"    \begin{tabular}{lcccccc}", r"        \toprule",
+             r"    \label{tab:fold_diagnostics}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\textwidth}", r"    \begin{tabular}{lcccccc}", r"        \toprule",
              r"        \textbf{Target} & \textbf{Valid / total} & \textbf{Excluded (single-class)} & \textbf{ARI across seeds} & "
              r"\textbf{NN min (km)} & \textbf{NN p5 (km)} & \textbf{NN median (km)} \\", r"        \midrule"]
     for t in TARGETS:
@@ -249,7 +253,7 @@ def tableS_folds():
         a = ov[ov.target == t].ari
         lines.append(f"        {LAB[t]} & {int(vt.valid.sum())}/{len(vt)} & {int((~vt.valid).sum())} & "
                      f"{a.mean():.2f} [{a.min():.2f}, {a.max():.2f}] & {ok.nn_min_km.min():.1f} & {ok.nn_p05_km.median():.1f} & {ok.nn_median_km.median():.1f} \\\\")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "tableS_fold_diagnostics.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -260,13 +264,13 @@ def tableS_cfs():
              r"versus on the 10 source basins only (this revision). Step = order of entry in the forward search; SU = symmetric uncertainty "
              r"with the class label. The source-only run selects 9 of the original 11 features; geomorphons and annual precipitation (bio\_12) "
              r"are not selected. Source: \texttt{results/stats/cfs\_comparison.csv}.}",
-             r"    \label{tab:cfs_comparison}", r"    \footnotesize", r"    \begin{tabular}{lcccc}", r"        \toprule",
+             r"    \label{tab:cfs_comparison}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\linewidth}", r"    \begin{tabular}{lcccc}", r"        \toprule",
              r"        \textbf{Feature} & \textbf{Step (all 14)} & \textbf{SU (all 14)} & \textbf{Step (source 10)} & \textbf{SU (source 10)} \\",
              r"        \midrule"]
     for _, r in c.iterrows():
         f = r.feature.replace("_", "\\_")
         lines.append(f"        \\texttt{{{f}}} & {r.step_all14} & {r.su_cf_all14} & {r.step_source10} & {r.su_cf_source10} \\\\")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table}"]
     (SEC / "tableS_cfs_comparison.tex").write_text("\n".join(lines) + "\n")
 
 
@@ -281,7 +285,7 @@ def tableS_buffered():
              r"the joint row is the stratified permutation test across targets. Residual-variogram ranges: Copiap\'o 30, Huasco 45, Elqui 21, "
              r"Limar\'i 17\,km. Source: \texttt{results/stats/buffered\_cv\_summary.csv}.}",
              r"    \label{tab:buffered_cv}", r"    \footnotesize",
-             r"    \begin{tabular}{l" + "c" * len(bufs) + "}", r"        \toprule",
+             r"    \begin{adjustbox}{max width=\textwidth}", r"    \begin{tabular}{l" + "c" * len(bufs) + "}", r"        \toprule",
              r"        \textbf{Target} & " + " & ".join(f"\\textbf{{{int(b)}\\,km}}" for b in bufs) + r" \\", r"        \midrule"]
     for t in TARGETS:
         cells = []
@@ -303,7 +307,7 @@ def tableS_buffered():
         ptxt = "$p<0.001$" if r.wilcoxon_p < 0.001 else f"$p={r.wilcoxon_p:.3f}$"
         cells.append(f"$\\mathbf{{{r.lift_reptile_pp:+.1f}}}$, {ptxt} ($n_c={int(r.n_clusters)}$)")
     lines.append(r"        \textbf{Joint (4 targets)} & " + " & ".join(cells) + r" \\")
-    lines += [r"        \bottomrule", r"    \end{tabular}", r"\end{table*}"]
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
     (SEC / "tableS_buffered_cv.tex").write_text("\n".join(lines) + "\n")
 
 

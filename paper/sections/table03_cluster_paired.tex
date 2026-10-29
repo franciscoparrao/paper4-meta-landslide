@@ -3,6 +3,7 @@
     \caption{Cluster-level paired comparison of each method against the Independent baseline at $K=1$ under spatial cross-validation (source-only features, five seeds). The paired unit is the $(\text{seed},\text{fold})$ spatial partition ($n_c$ per target); the paired difference is the per-cluster mean-$F_1$ gap. Intervals are 95\% hierarchical-bootstrap CIs (2{,}000 resamples); $^{*}$CI excludes zero. $p$ is the two-sided Wilcoxon signed-rank test on the cluster differences; $p_{\text{Holm}}$ applies the Holm correction over the eight pre-specified secondary tests (four targets $\times$ \{Reptile, FOMAML\}). The \textbf{primary, pre-specified hypothesis} is the joint row: a permutation test stratified by target (sign flips of the cluster differences within each target, 20{,}000 permutations; statistic = mean of per-target mean differences). Source: \texttt{results/stats/cluster\_paired\_vs\_independent.csv}, \texttt{secondary\_holm\_r1.csv}, \texttt{joint\_tests\_r1.csv}.}
     \label{tab:cluster_paired}
     \footnotesize
+    \begin{adjustbox}{max width=\textwidth}
     \begin{tabular}{llcccc}
         \toprule
         \textbf{Target} & \textbf{Method} & \textbf{$\Delta F_1$ vs Indep.\ (pp) [95\% CI]} & \textbf{Clusters $>0$} & \textbf{Wilcoxon $p$} & \textbf{$p_{\text{Holm}}$} \\
@@ -34,4 +35,5 @@
         Joint ($n_c=72$) & DANN & $+0.3$ [-1.5, +2.1] & --- & 0.734 & --- \\
         \bottomrule
     \end{tabular}
+    \end{adjustbox}
 \end{table*}

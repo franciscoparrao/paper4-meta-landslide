@@ -3,6 +3,7 @@
     \caption{Buffered spatial cross-validation at $K=1$ (source-only features, five seeds). Support pixels within the stated distance of the held-out cluster are removed from the support pool before sampling. Cells give the cluster-level paired Reptile $-$ Independent difference in pp $F_1$ with 95\% hierarchical-bootstrap CI and the number of valid partitions $n_c$; the joint row is the stratified permutation test across targets. Residual-variogram ranges: Copiap\'o 30, Huasco 45, Elqui 21, Limar\'i 17\,km. Source: \texttt{results/stats/buffered\_cv\_summary.csv}.}
     \label{tab:buffered_cv}
     \footnotesize
+    \begin{adjustbox}{max width=\textwidth}
     \begin{tabular}{lccccc}
         \toprule
         \textbf{Target} & \textbf{0\,km} & \textbf{2\,km} & \textbf{5\,km} & \textbf{10\,km} & \textbf{20\,km} \\
@@ -15,4 +16,5 @@
         \textbf{Joint (4 targets)} & $\mathbf{+4.3}$, $p<0.001$ ($n_c=72$) & $\mathbf{+4.4}$, $p<0.001$ ($n_c=72$) & $\mathbf{+4.2}$, $p<0.001$ ($n_c=72$) & $\mathbf{+4.3}$, $p<0.001$ ($n_c=72$) & $\mathbf{+3.6}$, $p<0.001$ ($n_c=67$) \\
         \bottomrule
     \end{tabular}
+    \end{adjustbox}
 \end{table*}

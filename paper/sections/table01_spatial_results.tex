@@ -3,6 +3,7 @@
     \caption{$F_1$ score (mean) with \textbf{two-stage hierarchical-bootstrap} 95\% confidence intervals (resampling $(\text{seed},\text{fold})$ partitions, then episodes; 2{,}000 resamples) for each target basin $\times$ shots-per-class $K$ $\times$ method, under spatial cross-validation with the leakage-free, source-only feature set (9 features) and five seeds. Best per row in \textbf{bold}. Copiap\'o $K=20$ is not reported ($N=19$ events). Valid $(\text{seed},\text{fold})$ partitions: Copiap\'o 15/25, Huasco 10/25, Elqui 25/25, Limar\'i 22/25 (Section~\ref{sec:methods:protocol}); total realized $K$-shot adaptations: 5{,}460. Source: \texttt{results/spatial\_benchmark/summary.csv}, \texttt{results/stats/hierarchical\_bootstrap.csv}.}
     \label{tab:spatial_results}
     \footnotesize
+    \begin{adjustbox}{max width=\textwidth}
     \begin{tabular}{llccccc}
         \toprule
         \textbf{Target} & \textbf{$K$} & \textbf{Independent} & \textbf{Fine-tune} & \textbf{DANN} & \textbf{Reptile} & \textbf{FOMAML} \\
@@ -27,4 +28,5 @@
                    & 20 & 0.542 [0.49,0.59] & 0.568 [0.52,0.62] & \textbf{0.575 [0.52,0.63]} & 0.537 [0.47,0.60] & 0.553 [0.50,0.61] \\
         \bottomrule
     \end{tabular}
+    \end{adjustbox}
 \end{table*}
