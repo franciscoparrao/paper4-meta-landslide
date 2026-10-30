@@ -65,16 +65,16 @@
 
 %% Abstract
 \begin{abstract}
-\revtext{Transfer of landslide susceptibility models to newly studied basins is routinely assessed with conventions that overstate it. We quantify five of them on one benchmark---14 Chilean watersheds, ten source basins spanning the Atacama-to-Patagonia gradient and four semi-arid targets in north-central Chile (27--31$^\circ$S)---using few-shot meta-learning (Reptile, FOMAML) as the paradigm under scrutiny and a 30\,m MERIT-DEM feature stack. Random cross-validation inflates $F_1$ by up to 21 percentage points (pp) in heterogeneous basins; balanced evaluation hides that precision at a 5\% prevalence is 0.05--0.09; pooling correlated episodes narrows confidence intervals $3.3\times$; selecting features with the labels of the target basins doubles the apparent few-shot advantage (from $+2.4$ to $+4.7$\,pp at $K=1$ under identical seeds); and comparing episodic meta-training against a size-weighted pooled baseline credits the algorithm with an effect that belongs to domain weighting. Under the corrected protocol---source-only feature selection, spatially disjoint and buffered validation, partition-level inference, five seeds---a meta-learned initialisation exceeds training from scratch at one labelled event per class by $+4.3$\,pp $F_1$ jointly across the four targets ($p<0.001$; $+2.6$ to $+7.4$\,pp per basin), by $+1.6$\,pp at five events and by nothing at ten; an independent replication gives $+2.2$\,pp. The advantage is reproduced by pooled pre-training once source basins are weighted equally ($-0.04$\,pp between episodic and balanced pooled training), a pooled-source logistic regression matches or exceeds every neural method at $K=1$, and adversarial domain adaptation offers no few-shot gain. Benchmark, data and protocol are released so that cross-site transfer claims can be tested without the test sites contributing to the model.}
+\revtext{Transfer of landslide susceptibility models to newly studied basins is routinely assessed with conventions that overstate it. We quantify five of them on one benchmark---14 Chilean watersheds, ten source basins spanning the Atacama-to-Patagonia gradient and four semi-arid targets in north-central Chile (27--31$^\circ$S)---using few-shot meta-learning as the paradigm under scrutiny and a 30\,m MERIT-DEM feature stack. Random cross-validation inflates $F_1$ by up to 21\,pp in heterogeneous basins; fixed-threshold evaluation hides that precision at 5\% prevalence is 0.05--0.09; pooling correlated episodes narrows confidence intervals $3.3\times$; selecting features with target-basin labels doubles the apparent few-shot advantage (from $+2.4$ to $+4.7$\,pp at $K=1$, identical seeds); and comparing episodic meta-training against a size-weighted pooled baseline credits the algorithm with an effect of domain weighting. Under the corrected protocol---source-only feature selection, spatially disjoint and buffered validation, partition-level inference, five seeds---a meta-learned initialisation exceeds training from scratch at one labelled event per class by $+4.3$\,pp $F_1$ jointly across the targets ($p<0.001$; significant in three of four basins after Holm correction), by $+1.6$\,pp at five events and by nothing at ten; an independent replication gives $+2.2$\,pp. Pooled pre-training reproduces the advantage once source basins are weighted equally ($-0.04$\,pp between episodic and balanced pooled training), a pooled-source logistic regression matches or exceeds every neural method at $K=1$, and adversarial domain adaptation offers no few-shot gain. Benchmark, data and protocol are released.}
 \end{abstract}
 
 %% Highlights (3-5 bullets, max 85 chars each)
 \begin{highlights}
 \item \revtext{Five standard evaluation conventions inflate cross-basin landslide transfer.}
 \item \revtext{Selecting features with target labels doubled the few-shot gain (+2.4 to +4.7 pp).}
-\item \revtext{Leakage-free, spatial, buffered: meta-learning beats scratch by 2--4 pp at K=1 only.}
+\item \revtext{Leakage-free, buffered spatial CV: meta-learning +2--4 pp at K=1 only, 3/4 basins (Holm).}
 \item \revtext{Basin-balanced pooled pre-training reproduces the meta-learning gain; episodes add 0.}
-\item \revtext{Pooled logistic regression matches or beats every neural method at K=1 in 4/4 basins.}
+\item \revtext{Pooled logistic regression matches or beats every neural method at K=1 in all basins.}
 \end{highlights}
 
 %% Keywords
@@ -166,11 +166,11 @@ remote sensing \sep spatial cross-validation \sep few-shot learning \sep Andes
 % Cluster-level paired significance table
 \input{sections/table03_cluster_paired.tex}
 
-% Negative-sampling sensitivity table
-\input{sections/table04_negatives_sensitivity.tex}
-
 % R1: domain weighting vs episodic training (reviewer 3 c.4, reviewer 2 c.4)
 \input{sections/table05_pooled_vs_episodic.tex}
+
+% Negative-sampling sensitivity table
+\input{sections/table04_negatives_sensitivity.tex}
 
 \begin{figure*}[ht]
     \centering
@@ -265,7 +265,7 @@ During the preparation of this work the authors used Claude Code (Anthropic) to 
 \begin{figure*}[ht]
     \centering
     \includegraphics[width=\linewidth]{figS11_precision_recall_prevalence.pdf}
-    \caption{Precision--recall re-weighted to a realistic landslide prevalence ($\pi=0.05$) for the pooled $K=1$ spatial-CV queries (Independent vs.\ Reptile), per target basin. Curves are obtained from the balanced operating characteristics via $\text{precision}(\pi)=\pi\,\text{TPR}/[\pi\,\text{TPR}+(1-\pi)\,\text{FPR}]$; the dotted line marks the no-skill baseline (precision $=\pi$). Absolute precision is low at operational prevalence---most flagged pixels are false positives, a property masked by the balanced $F_1$---yet the meta-learned Reptile prior dominates Independent in average precision (AP, legend) in all four targets, confirming the $K=1$ advantage is prevalence-robust (Section~\ref{sec:results:prevalence}).}
+    \caption{Precision--recall re-weighted to a realistic landslide prevalence ($\pi=0.05$) for the pooled $K=1$ spatial-CV queries (Independent vs.\ Reptile), per target basin. Curves are obtained from the held-out-query operating characteristics via $\text{precision}(\pi)=\pi\,\text{TPR}/[\pi\,\text{TPR}+(1-\pi)\,\text{FPR}]$; the dotted line marks the no-skill baseline (precision $=\pi$). Absolute precision is low at operational prevalence---most flagged pixels are false positives, a property masked by the fixed-threshold $F_1$---yet the meta-learned Reptile initialisation dominates Independent in average precision (AP, legend) in all four targets, confirming the $K=1$ advantage is prevalence-robust (Section~\ref{sec:results:prevalence}).}
     \label{fig:pr_prevalence}
 \end{figure*}
 
