@@ -313,8 +313,43 @@ def tableS_buffered():
     (SEC / "tableS_buffered_cv.tex").write_text("\n".join(lines) + "\n")
 
 
+def tableS_source_ablations():
+    pr = pd.read_csv(R / "source_ablations/paired.csv")
+    conds = [("baseline", "Original pool (ten basins)"), ("no_maule", "Without Maule 2010 (seismic)"),
+             ("homog_neg", "Homogeneous negatives (Cha\\~naral, Taltal)")]
+    lines = [r"\begin{table*}[ht]", r"    \centering",
+             r"    \caption{Source-pool ablations under spatial cross-validation (source-only features, five seeds, identical partitions and "
+             r"support draws). Cells give the cluster-level paired difference to Independent in pp $F_1$ (mean [95\% bootstrap CI]); the joint "
+             r"column is the stratified permutation test across the four targets. `Without Maule' removes the only purely earthquake-triggered "
+             r"source inventory; `homogeneous negatives' re-draws the negatives of the two basins with mapped non-landslide points using the "
+             r"random 500\,m-buffer rule of the other twelve basins. The original-pool row is an independent run of the protocol and differs from "
+             r"Table~\ref{tab:cluster_paired} by the run-to-run variance discussed in Section~\ref{sec:results:inference}. "
+             r"Source: \texttt{results/source\_ablations/paired.csv}.}",
+             r"    \label{tab:source_ablations}", r"    \footnotesize", r"    \begin{adjustbox}{max width=\textwidth}",
+             r"    \begin{tabular}{llccccc}", r"        \toprule",
+             r"        \textbf{Source pool} & \textbf{Method, $K$} & " + " & ".join(f"\\textbf{{{LAB[t]}}}" for t in TARGETS) + r" & \textbf{Joint} \\",
+             r"        \midrule"]
+    for ci, (c, lab) in enumerate(conds):
+        first = True
+        for m, mlab in [("reptile", "Reptile"), ("finetune_balanced", "Fine-tune (balanced)")]:
+            for K in [1, 5]:
+                sub = pr[(pr.condition == c) & (pr.method == m) & (pr.K == K)].set_index("target")
+                cells = []
+                for t in TARGETS:
+                    r = sub.loc[t]; star = "$^{*}$" if (r.ci_lo_pp > 0 or r.ci_hi_pp < 0) else ""
+                    cells.append(f"${r.diff_pp:+.1f}$ [{r.ci_lo_pp:+.1f}, {r.ci_hi_pp:+.1f}]{star}")
+                j = sub.loc["JOINT"]
+                jp = "$p<0.001$" if j.wilcoxon_p < 0.001 else f"$p={j.wilcoxon_p:.3f}$"
+                lines.append(f"        {lab if first else ''} & {mlab}, $K={K}$ & " + " & ".join(cells) + f" & ${j.diff_pp:+.1f}$, {jp} \\\\")
+                first = False
+        if ci < len(conds) - 1:
+            lines.append(r"        \midrule")
+    lines += [r"        \bottomrule", r"    \end{tabular}", r"    \end{adjustbox}", r"\end{table*}"]
+    (SEC / "tableS_source_ablations.tex").write_text("\n".join(lines) + "\n")
+
+
 if __name__ == "__main__":
     table01(); table02(); table03(); table04(); table05()
-    tableS_basins(); tableS_folds(); tableS_cfs(); tableS_buffered()
+    tableS_basins(); tableS_folds(); tableS_cfs(); tableS_buffered(); tableS_source_ablations()
     for f in ["table01_spatial_results", "table02_extended_baselines", "table03_cluster_paired", "table04_negatives_sensitivity", "table05_pooled_vs_episodic"]:
         print(f"wrote {SEC / (f + '.tex')}")

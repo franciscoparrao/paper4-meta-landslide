@@ -108,6 +108,13 @@ add("positives total", f"{int(ds.n_pos.sum()):,}", "data/ml_ready/dataset_summar
 add("source positives", f"{int(ds[ds.role == 'source'].n_pos.sum()):,}", "data/ml_ready/dataset_summary.csv")
 add("taltal positives", f"{int(ds[ds.basin == 'taltal'].n_pos.iloc[0]):,}", "data/ml_ready/dataset_summary.csv")
 
+
+# --- source-pool ablations (R1, reviewer 3 c.11-12)
+sa = pd.read_csv(R / "source_ablations/paired.csv")
+for cond in ["baseline", "no_maule", "homog_neg"]:
+    v = sa[(sa.condition == cond) & (sa.K == 1) & (sa.method == "reptile") & (sa.target == "JOINT")].diff_pp.iloc[0]
+    add(f"source ablation {cond} joint K=1 (pp)", f"{v:+.1f}", "source_ablations/paired.csv")
+
 # --- run the checks
 fails = 0
 print(f"{'check':<44} {'value':>8}  found  source")
