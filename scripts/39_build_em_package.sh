@@ -49,6 +49,6 @@ open(sys.argv[2], "w").write("\n".join("• " + i for i in items) + "\n")
 for i in items: print(len(i), i)
 PY
 
-# 5. declaration of interest (unchanged from the original submission)
-cp "$ROOT/paper/declaration_of_interest.pdf" "$PKG/07_declaration_of_interest.pdf"
+# 5. declaration of interest: NOT copied. The R1 declaration must be generated with Elsevier's online
+#    Declaration of Interests form (new title; SurtGIS disclosure, same text as the manuscript section).
 ls -l "$PKG"

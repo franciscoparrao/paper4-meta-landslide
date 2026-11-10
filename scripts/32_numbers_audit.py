@@ -115,6 +115,36 @@ for cond in ["baseline", "no_maule", "homog_neg"]:
     v = sa[(sa.condition == cond) & (sa.K == 1) & (sa.method == "reptile") & (sa.target == "JOINT")].diff_pp.iloc[0]
     add(f"source ablation {cond} joint K=1 (pp)", f"{v:+.1f}", "source_ablations/paired.csv")
 
+# --- random vs spatial CV inflation (Sect. 5.5, Fig. 5 caption, abstract); ranges over the four plotted methods
+rb = pd.read_csv(R / "benchmark/summary.csv")
+rv = s.merge(rb, on=["target", "K", "method"], suffixes=("_s", "_r"))
+rv["d"] = 100 * (rv.f1_mean_r - rv.f1_mean_s)
+rv = rv[rv.method.isin(["independent", "finetune", "reptile", "fomaml"])]
+
+
+def rng(sub, sign=1):
+    lo, hi = sorted([sign * sub.d.min(), sign * sub.d.max()])
+    return f"{round(lo)}--{round(hi)}"
+
+
+add("random-spatial Elqui all K (pp)", rng(rv[rv.target == "elqui"]), "benchmark + spatial_benchmark summary")
+add("random-spatial Limari all K (pp)", rng(rv[rv.target == "limari"]), "benchmark + spatial_benchmark summary")
+add("random-spatial Copiapo K=1 (pp)", rng(rv[(rv.target == "copiapo") & (rv.K == 1)]), "benchmark + spatial_benchmark summary")
+add("random-spatial Copiapo K=5 (pp)", rng(rv[(rv.target == "copiapo") & (rv.K == 5)]), "benchmark + spatial_benchmark summary")
+add("spatial-random Huasco K=1 (pp)", rng(rv[(rv.target == "huasco") & (rv.K == 1)], -1), "benchmark + spatial_benchmark summary")
+add("random-spatial max (pp)", f"up to {round(rv.d.max())}", "benchmark + spatial_benchmark summary")
+
+# --- random-CV design (Sect. 4.3, Fig. 2 caption): episodes per (target, K, method, seed)
+rr = pd.read_csv(R / "benchmark/raw_runs.csv")
+n_ep = rr.groupby(["target", "K", "method", "seed"]).episode.nunique().unique()
+add("random-CV episodes per seed", f"{int(n_ep[0])} episodes" if len(n_ep) == 1 else "inconsistent", "benchmark/raw_runs.csv")
+add("random-CV adaptations total", f"{len(rr):,}", "benchmark/raw_runs.csv")
+
+# --- Elqui spatial-CV F1 range over the five methods (Sect. 6.3)
+for k in [1, 20]:
+    e = s[(s.target == "elqui") & (s.K == k)].f1_mean
+    add(f"Elqui spatial F1 range K={k}", f"{e.min():.2f}$--${e.max():.2f}$", "spatial_benchmark/summary.csv")
+
 # --- run the checks
 fails = 0
 print(f"{'check':<44} {'value':>8}  found  source")
